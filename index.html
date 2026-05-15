@@ -165,7 +165,7 @@
             <label>Gastos (R$)</label>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><input type="number" id="v-hosp" placeholder="Hotel"><input type="number" id="v-trans" placeholder="Transporte"></div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:8px;"><input type="number" id="v-alime" placeholder="Comida"><input type="number" id="v-atrac" placeholder="Atrações"></div>
-            <label>Fotos (Max: 3)</label><input type="file" id="inp-foto" accept="image/*" multiple>
+            <label>Mídias(4 Fotos e 1 Video)</label> <input type="file" id="inp-foto" accept="image/*,video/*" multiple>
             <button class="btn-acao" onclick="salvarViagem()">Salvar Memória🚩</button>
         </div>
     </div>
@@ -295,22 +295,64 @@
     }
 
     function renderTimeline() {
-        const lista = document.getElementById('timeline-list');
-        lista.innerHTML = '';
-        const ordenadas = [...dbGlobal].sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate));
-        ordenadas.forEach(v => {
-            let track = '', bullets = '';
-            const urls = v.fotos ? v.fotos.map(f => URL.createObjectURL(f)) : [];
-            urls.forEach((url, idx) => {
+    const lista = document.getElementById('timeline-list');
+    if (!lista) return;
+    lista.innerHTML = '';
+    
+    // Ordena por data (mais recente primeiro)
+    const ordenadas = [...dbGlobal].sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate));
+
+    ordenadas.forEach(v => {
+        let track = '';
+        let bullets = '';
+        
+        // URLs temporárias para fotos e vídeos
+        const fotosUrls = v.fotos ? v.fotos.map(f => URL.createObjectURL(f)) : [];
+        const videosUrls = v.videos ? v.videos.map(f => URL.createObjectURL(f)) : [];
+        const todasMidias = [...fotosUrls, ...videosUrls];
+
+        todasMidias.forEach((url, idx) => {
+            const isVideo = idx >= fotosUrls.length; // Se o índice for maior que o total de fotos, é vídeo
+            
+            if (isVideo) {
+                track += `<video src="${url}" class="img-slide" style="width:100%; height:200px; object-fit:cover;" controls muted playsinline></video>`;
+            } else {
                 track += `<img src="${url}" class="img-slide" style="width:100%; height:200px; object-fit:cover;">`;
-                bullets += `<div class="bullet-tl-${v.id}" style="width:5px; height:5px; border-radius:50%; background:${idx===0?'white':'rgba(255,255,255,0.4)'}; transition:0.3s;"></div>`;
-            });
-            const item = document.createElement('div');
-            item.className = 'timeline-item';
-            item.innerHTML = `<div class="t-dot"></div><div class="t-card" style="padding: 12px;"><div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><div><b style="color: var(--primary); font-size: 11px;">${v.uf.replace('BR','')}</b><h4 style="margin:0; font-size: 16px; font-weight:800;">${v.cidade}</h4></div><span style="font-size: 10px; color: var(--text-sub);">${v.data}</span></div><div class="carousel-fotos" id="tl-car-${v.id}" style="height:200px; position:relative; border-radius: 15px;" ontouchstart="hTS(event)" ontouchmove="hTM_TL(event, '${v.id}', ${urls.length})"><div class="track-fotos" style="display:flex; transition:0.4s ease-out; height:100%;">${track || '<div style="width:100%; height:200px; background:#eee; display:flex; align-items:center; justify-content:center;">📍 Sem fotos</div>'}</div><div style="position:absolute; bottom:10px; left:0; width:100%; display:flex; justify-content:center; gap:4px; pointer-events:none;">${bullets}</div></div><div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 12px; font-weight: 800; color: var(--money)">R$ ${v.total.toLocaleString('pt-BR')}</span><button onclick="removerViagem('${v.id}', '${v.cidade}')" style="background:none; border:none; font-size:14px; opacity:0.3;">🗑️</button></div></div>`;
-            lista.appendChild(item);
+            }
+            
+            bullets += `<div class="bullet-tl-${v.id}" style="width:5px; height:5px; border-radius:50%; background:${idx === 0 ? 'white' : 'rgba(255,255,255,0.4)'}; transition:0.3s;"></div>`;
         });
-    }
+
+        const item = document.createElement('div');
+        item.className = 'timeline-item';
+        item.innerHTML = `
+            <div class="t-dot"></div>
+            <div class="t-card" style="padding: 12px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <div>
+                        <b style="color: var(--primary); font-size: 11px;">${v.uf.replace('BR','')}</b>
+                        <h4 style="margin:0; font-size: 16px; font-weight:800;">${v.cidade}</h4>
+                    </div>
+                    <span style="font-size: 10px; color: var(--text-sub);">${v.data}</span>
+                </div>
+                <div class="carousel-fotos" id="tl-car-${v.id}" style="height:200px; position:relative; border-radius: 15px;" 
+                     ontouchstart="hTS(event)" 
+                     ontouchmove="hTM_TL(event, '${v.id}', ${todasMidias.length})">
+                    <div class="track-fotos" style="display:flex; transition:0.4s ease-out; height:100%;">
+                        ${track || '<div style="width:100%; height:200px; background:#eee; display:flex; align-items:center; justify-content:center;">📍 Sem mídias</div>'}
+                    </div>
+                    <div style="position:absolute; bottom:10px; left:0; width:100%; display:flex; justify-content:center; gap:4px; pointer-events:none;">
+                        ${bullets}
+                    </div>
+                </div>
+                <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 12px; font-weight: 800; color: var(--money)">R$ ${v.total.toLocaleString('pt-BR')}</span>
+                    <button onclick="removerViagem('${v.id}', '${v.cidade}')" style="background:none; border:none; font-size:14px; opacity:0.3;">🗑️</button>
+                </div>
+            </div>`;
+        lista.appendChild(item);
+    });
+}
 
     function renderJornada() {
         const visitadosCount = [...new Set(dbGlobal.map(v => v.uf))].length;
@@ -342,14 +384,54 @@
     }
 
     async function salvarViagem() {
-        const elCidade = document.getElementById('txt-cidade'), elData = document.getElementById('txt-data'), elUf = document.getElementById('sel-uf'), elFoto = document.getElementById('inp-foto'), elPraia = document.getElementById('chk-praia');
-        if (!elCidade.value.trim() || !elData.value) return mostrarAlerta("Preencha os campos!", "📍");
-        const h = parseFloat(document.getElementById('v-hosp').value) || 0, t = parseFloat(document.getElementById('v-trans').value) || 0, al = parseFloat(document.getElementById('v-alime').value) || 0, at = parseFloat(document.getElementById('v-atrac').value) || 0;
-        const trip = { id: Date.now().toString(), uf: elUf.value, cidade: elCidade.value, data: elData.value.split('-').reverse().join('/'), rawDate: elData.value, fotos: Array.from(elFoto.files), h, t, al, at, praia: elPraia.checked, total: h+t+al+at };
-        await dbSalvar(trip);
-        ['txt-cidade','txt-data','v-hosp','v-trans','v-alime','v-atrac','inp-foto'].forEach(id => document.getElementById(id).value = ""); elPraia.checked = false;
-        mostrarAlerta("Memória salva!", "🚀"); await carregarTudo(); trocarAba('mapa', document.querySelectorAll('.btn-aba')[0]);
+    const elCidade = document.getElementById('txt-cidade');
+    const elData = document.getElementById('txt-data');
+    const elUf = document.getElementById('sel-uf');
+    const elFoto = document.getElementById('inp-foto');
+    const elPraia = document.getElementById('chk-praia');
+
+    if (!elCidade.value.trim() || !elData.value) {
+        return mostrarAlerta("Cidade e Data são obrigatórios!", "📍");
     }
+
+    const allFiles = Array.from(elFoto.files);
+    
+    // Filtro de Mídia (4 fotos e 1 vídeo)
+    const fotos = allFiles.filter(f => f.type.startsWith('image/')).slice(0, 4);
+    const videos = allFiles.filter(f => f.type.startsWith('video/')).slice(0, 1);
+
+    if (fotos.length === 0 && videos.length === 0) {
+        return mostrarAlerta("Selecione ao menos uma foto ou vídeo!", "📸");
+    }
+
+    const h = parseFloat(document.getElementById('v-hosp').value) || 0;
+    const t = parseFloat(document.getElementById('v-trans').value) || 0;
+    const al = parseFloat(document.getElementById('v-alime').value) || 0;
+    const at = parseFloat(document.getElementById('v-atrac').value) || 0;
+
+    const trip = { 
+        id: Date.now().toString(), 
+        uf: elUf.value, 
+        cidade: elCidade.value, 
+        data: elData.value.split('-').reverse().join('/'), 
+        rawDate: elData.value, 
+        fotos: fotos,   // Array de Blobs
+        videos: videos, // Array de Blobs (máx 1)
+        h, t, al, at, 
+        praia: elPraia.checked, 
+        total: h + t + al + at 
+    };
+
+    await dbSalvar(trip);
+    
+    // Limpeza do formulário
+    ['txt-cidade','txt-data','v-hosp','v-trans','v-alime','v-atrac','inp-foto'].forEach(id => document.getElementById(id).value = ""); 
+    elPraia.checked = false;
+    
+    mostrarAlerta("Memória salva!", "🚀"); 
+    await carregarTudo(); 
+    trocarAba('mapa', document.querySelectorAll('.btn-aba')[0]);
+}
 
     function removerViagem(id, cidade) {
         const modal = document.getElementById('custom-confirm');
