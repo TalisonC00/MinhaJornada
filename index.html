@@ -425,21 +425,59 @@
     }
 
     function verificarNovasConquistas() {
-        const visitadosCount = [...new Set(dbGlobal.map(v => v.uf))].length;
-        const metas = [
-            {id: 'm1', n:1, l:'Primeiro Passo', i:'🌱'}, {id: 'm5', n:5, l:'Viajante', i:'🚗'},
-            {id: 'm10', n:10, l:'Explorador', i:'✈️'}, {id: 'm20', n:20, l:'Aventureiro', i:'⛰️'},
-            {id: 'm25', n:25, l:'Nômade', i:'🌍'}, {id: 'm27', n:27, l:'Dono do Brasil', i:'👑'}
-        ];
-        const celebrados = JSON.parse(localStorage.getItem('conquistas_vistas') || "[]");
-        let novas = [];
-        metas.forEach(m => { if (visitadosCount >= m.n && !celebrados.includes(m.id)) novas.push({nome: m.l, icone: m.i, id: m.id}); });
-        if (novas.length > 0) {
-            filaDeConquistas = [...filaDeConquistas, ...novas];
-            localStorage.setItem('conquistas_vistas', JSON.stringify([...celebrados, ...novas.map(n => n.id)]));
-            if (document.getElementById('modal-celebracao').style.display !== 'flex') mostrarProximaConquistaDaFila();
+    // Garante que o banco local possui dados antes de rodar a validação
+    if (!dbGlobal || dbGlobal.length === 0) return;
+
+    // Extrai uma lista de UFs únicas visitadas de forma plana
+    const visitadosUfs = [...new Set(dbGlobal.map(v => v.uf))];
+    
+    const metas = [
+        {id: 'm1',  n:1,  l:'Primeiro Passo',   i:'🌱'}, 
+        {id: 'm5',  n:5,  l:'Viajante',         i:'🚗'},
+        {id: 'm10', n:10, l:'Explorador',       i:'✈️'}, 
+        {id: 'm20', n:20, l:'Aventureiro',       i:'⛰️'},
+        {id: 'm25', n:25, l:'Nômade',           i:'🌍'}, 
+        {id: 'm27', n:27, l:'Dono do Brasil',   i:'👑'}
+    ];
+    
+    const celebrados = JSON.parse(localStorage.getItem('conquistas_vistas') || "[]");
+    let novas = [];
+
+    // 1. Validação dos marcos de quantidade de estados
+    metas.forEach(m => { 
+        if (visitadosUfs.length >= m.n && !celebrados.includes(m.id)) {
+            novas.push({nome: m.l, icone: m.i, id: m.id});
+        }
+    });
+
+    // 2. Validação da conquista especial de praia
+    let temPraia = dbGlobal.some(v => v.praia);
+    if (temPraia && !celebrados.includes('praia')) {
+        novas.push({nome: 'Pé na Areia', icone: '🏖️', id: 'praia'});
+    }
+
+    // 3. Validação do fechamento completo das Regiões geográficas
+    for (let r in REGIOES) {
+        const reg = REGIOES[r];
+        const vNaReg = reg.UFs.filter(u => visitadosUfs.includes(u));
+        const ok = vNaReg.length === reg.UFs.length;
+        
+        if (ok && !celebrados.includes('reg_' + r)) {
+            novas.push({nome: `Região ${r} Concluída`, icone: reg.icon, id: 'reg_' + r});
         }
     }
+
+    // Se houver novos desbloqueios, empilha na fila de animação e salva no disco
+    if (novas.length > 0) {
+        filaDeConquistas = [...filaDeConquistas, ...novas];
+        localStorage.setItem('conquistas_vistas', JSON.stringify([...celebrados, ...novas.map(n => n.id)]));
+        
+        // Se o modal visual não estiver aberto na tela, dispara o gatilho da fila
+        if (document.getElementById('modal-celebracao').style.display !== 'flex') {
+            mostrarProximaConquistaDaFila();
+        }
+    }
+}
 
     function renderTimeline() {
     const lista = document.getElementById('timeline-list');
@@ -502,10 +540,55 @@
 }
 
     function renderJornada() {
-        const visitadosCount = [...new Set(dbGlobal.map(v => v.uf))].length;
-        const metas = [{n:1, l:'Primeiro Passo', i:'🌱'}, {n:5, l:'Viajante', i:'🚗'}, {n:10, l:'Explorador', i:'✈️'}, {n:20, l:'Aventureiro', i:'⛰️'}, {n:25, l:'Nômade', i:'🌍'}, {n:27, l:'Dono do Brasil', i:'👑'}];
-        document.getElementById('grid-conquistas').innerHTML = metas.map(m => `<div class="badge ${visitadosCount >= m.n ? 'active' : 'locked'}" onclick="if(${visitadosCount < m.n}) mostrarAlerta('Faltam ${m.n - visitadosCount} estados!', '🏃')"><div class="b-icon">${m.i}</div><div class="badge-name">${m.l}</div></div>`).join('');
+    // Mapeia os estados diretamente do array unificado
+    const visitadosUfs = [...new Set(dbGlobal.map(v => v.uf))];
+    const metas = [
+        {n:1,  l:'Primeiro Passo', i:'🌱'}, 
+        {n:5,  l:'Viajante',       i:'🚗'}, 
+        {n:10, l:'Explorador',     i:'✈️'}, 
+        {n:20, l:'Aventureiro',     i:'⛰️'}, 
+        {n:25, l:'Nômade',         i:'🌍'}, 
+        {n:27, l:'Dono do Brasil', i:'👑'}
+    ];
+    
+    // 1. Gera o HTML das metas padrão por quantidade de UF
+    let html = metas.map(m => {
+        const ok = visitadosUfs.length >= m.n;
+        return `
+            <div class="badge ${ok ? 'active' : 'locked'}" onclick="if(${!ok}) mostrarAlerta('Faltam ${m.n - visitadosUfs.length} estados para liberar este troféu!', '🏃')">
+                <div class="b-icon">${m.i}</div>
+                <div class="badge-name">${m.l}</div>
+            </div>
+        `;
+    }).join('');
+    
+    // 2. Gera o HTML da medalha de praia
+    let temPraia = dbGlobal.some(v => v.praia);
+    html += `
+        <div class="badge ${temPraia ? 'active' : 'locked'}" onclick="if(${!temPraia}) mostrarAlerta('Registre uma viagem marcando a opção de Praia para liberar!', '🏖️')">
+            <div class="b-icon">🏖️</div>
+            <div class="badge-name">Pé na areia</div>
+        </div>
+    `;
+    
+    // 3. Gera o HTML das medalhas regionais com cores customizadas caso ativo
+    for (let r in REGIOES) {
+        const reg = REGIOES[r];
+        const vNaReg = reg.UFs.filter(u => visitadosUfs.includes(u));
+        const ok = vNaReg.length === reg.UFs.length;
+        
+        html += `
+            <div class="badge ${ok ? 'active' : 'locked'}" onclick="msgRegiao('${r}', ${ok})">
+                <div class="b-icon" style="${ok ? 'background:' + reg.color + '; color:#fff;' : ''}">${reg.icon}</div>
+                <div class="badge-name">${r}</div>
+            </div>
+        `;
     }
+    
+    // Injeta o bloco completo de badges no container visível
+    const grid = document.getElementById('grid-conquistas');
+    if (grid) grid.innerHTML = html;
+}
 
     function renderGastos() {
         let html = '', totalGeral = 0;
