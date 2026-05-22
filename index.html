@@ -27,129 +27,36 @@
         .ativa { display: block; }
         .card { background: var(--card); padding: 20px; margin: 16px; border-radius: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); }
 
-       /* TELA DE PAGAMENTO PREMIUM (PAYWALL UI) */
+        /* TELA DE PAGAMENTO PREMIUM (PAYWALL UI) */
         #paywall-overlay { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: linear-gradient(135deg, #BAE6FD 0%, #F1F5F9 100%); 
-            z-index: 9999; 
-            display: none; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            padding: 24px; 
-            box-sizing: border-box;
+            z-index: 9999; display: none; flex-direction: column; 
+            align-items: center; justify-content: center; padding: 24px; box-sizing: border-box;
         }
         
         .paywall-card {
-            background: #FFFFFF;
-            padding: 32px 24px;
-            border-radius: 36px;
-            box-shadow: 0 20px 50px rgba(30, 41, 59, 0.15);
-            max-width: 360px;
-            width: 100%;
-            text-align: center;
-            box-sizing: border-box;
-            border: 1px solid rgba(255, 255, 255, 0.7);
+            background: #FFFFFF; padding: 32px 24px; border-radius: 36px;
+            box-shadow: 0 20px 50px rgba(30, 41, 59, 0.15); max-width: 360px;
+            width: 100%; text-align: center; box-sizing: border-box; border: 1px solid rgba(255, 255, 255, 0.7);
         }
 
-        .pay-app-icon {
-            font-size: 50px;
-            margin-bottom: 16px;
-            animation: float 3s ease-in-out infinite;
-        }
+        .pay-app-icon { font-size: 50px; margin-bottom: 16px; animation: float 3s ease-in-out infinite; }
+        .pay-title { font-size: 26px; font-weight: 800; color: var(--text-main); margin: 0 0 8px 0; letter-spacing: -0.5px; }
+        .pay-price { font-size: 32px; font-weight: 800; color: var(--money); margin: 15px 0; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .pay-desc { font-size: 14px; color: var(--text-sub); margin: 0 0 24px 0; line-height: 1.6; }
 
-        .pay-title { 
-            font-size: 26px; 
-            font-weight: 800; 
-            color: var(--text-main); 
-            margin: 0 0 8px 0;
-            letter-spacing: -0.5px;
-        }
-
-        .pay-price {
-            font-size: 32px;
-            font-weight: 800;
-            color: var(--money);
-            margin: 15px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-        }
-
-        .pay-price span {
-            font-size: 14px;
-            color: var(--text-sub);
-            font-weight: 600;
-            text-decoration: line-through;
-        }
-
-        .pay-desc { 
-            font-size: 14px; 
-            color: var(--text-sub); 
-            margin: 0 0 24px 0; 
-            line-height: 1.6; 
-        }
-
-        /* Lista de Benefícios (Gatilho de Valor) */
-        .pay-features {
-            text-align: left;
-            margin-bottom: 28px;
-            background: #F8FAFC;
-            padding: 16px;
-            border-radius: 20px;
-            border: 1px solid #F1F5F9;
-        }
-
-        .feature-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-main);
-            margin-bottom: 12px;
-        }
-        .feature-item:last-child { margin-bottom: 0; }
+        .pay-features { text-align: left; margin-bottom: 28px; background: #F8FAFC; padding: 16px; border-radius: 20px; border: 1px solid #F1F5F9; }
+        .feature-item { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--text-main); margin-bottom: 12px; }
 
         .btn-pay {
-            background: linear-gradient(135deg, var(--money) 0%, #059669 100%);
-            color: #fff;
-            border: none;
-            padding: 18px;
-            border-radius: 18px;
-            width: 100%;
-            font-weight: 800;
-            font-size: 16px;
-            cursor: pointer;
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
-            transition: 0.3s;
+            background: linear-gradient(135deg, var(--money) 0%, #059669 100%); color: #fff; border: none; padding: 18px;
+            border-radius: 18px; width: 100%; font-weight: 800; font-size: 16px; cursor: pointer; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3); transition: 0.3s;
         }
+        .btn-pay:active { transform: scale(0.98); box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2); }
+        .pay-footer-note { font-size: 11px; color: var(--text-sub); margin-top: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; }
 
-        .btn-pay:active {
-            transform: scale(0.98);
-            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
-        }
-
-        .pay-footer-note {
-            font-size: 11px;
-            color: var(--text-sub);
-            margin-top: 16px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
       
         /* MAPA */
         .mapa-card { background: var(--card); margin: 16px; border-radius: 28px; height: calc(100% - 32px); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
@@ -195,6 +102,7 @@
         .menu-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; display: flex; height: 55px; border-top-left-radius: 28px; border-top-right-radius: 28px; z-index: 1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); }
         .btn-aba { flex: 1; border: none; background: none; font-size: 18px; color: #CBD5E1; cursor: pointer; outline: none; transition: 0.3s; -webkit-tap-highlight-color: transparent; }
         .btn-aba.active { color: var(--primary); transform: translateY(-5px); }
+        @keyframes bounceCustom { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
     </style>
 </head>
 <body>
@@ -212,9 +120,7 @@
                 <div class="feature-item">🔒 <span>Armazenamento 100% privado</span></div>
             </div>
 
-            <div class="pay-price">
-                <span></span>R$ 19,90
-            </div>
+            <div class="pay-price">R$ 19,90</div>
             <p style="font-size: 11px; font-weight: 700; color: var(--text-sub); margin: -10px 0 20px 0; text-transform: uppercase; letter-spacing: 0.5px;">Pagamento Único • Memórias Vitalícias</p>
 
             <button class="btn-pay" onclick="irParaPagamento()">Comprar App Minha Jornada</button>
@@ -237,16 +143,19 @@
         <div id="popup-content" class="popup-scroll"></div>
     </div>
     
-    <div id="modal-celebracao" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(10px); flex-direction: column; text-align: center; color: white;">
+    <div id="modal-celebracao" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 10000; align-items: center; justify-content: center; backdrop-filter: blur(10px); flex-direction: column; text-align: center; color: white;">
         <div style="font-size: 100px; margin-bottom: 20px; animation: bounceCustom 1s infinite;">🏆</div>
-        <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 32px; width: 85%; max-width: 340px; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 20px 50px rgba(0,0,0,0.3);">
+        <div id="captura-card" style="background: #1E293B; padding: 30px; border-radius: 32px; width: 85%; max-width: 340px; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 20px 50px rgba(0,0,0,0.5); text-align: center; box-sizing: border-box;">
             <h1 style="margin: 0; font-size: 26px; font-weight: 800; color: #FACC15;">NOVA CONQUISTA!</h1>
             <p style="font-size: 14px; opacity: 0.8; margin: 10px 0;">Você desbloqueou o troféu:</p>
             <div style="display: flex; align-items: center; justify-content: center; gap: 15px; background: white; color: #1E293B; padding: 15px; border-radius: 20px; margin: 20px 0;">
                 <div id="celebracao-icone" style="font-size: 30px; width: 50px; height: 50px; background: #F1F5F9; border-radius: 50%; display: flex; align-items: center; justify-content: center;"></div>
                 <h3 id="celebracao-nome" style="margin: 0; font-size: 18px; font-weight: 800; flex: 1; text-align: left;"></h3>
             </div>
-            <button onclick="fecharCelebracaoEProxima()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 12px; border-radius: 18px; font-weight: 700; width: 100%; cursor: pointer;"> Uhuuul! 🔥</button>
+            <div style="display: flex; flex-direction: column; gap: 12px; width: 100%;">
+                <button onclick="compartilharNoStories()" style="background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); color: white; border: none; padding: 15px; border-radius: 18px; font-weight: 800; width: 100%; cursor: pointer;">📸 Compartilhar no Stories</button>
+                <button onclick="fecharCelebracaoEProxima()" style="background: rgba(255,255,255,0.2); color: white; border: none; padding: 12px; border-radius: 18px; font-weight: 700; width: 100%; cursor: pointer;"> Uhuuul! 🔥</button>
+            </div>
         </div>
     </div>
 
@@ -335,22 +244,17 @@
 
     function irParaPagamento() { window.location.href = STRIPE_LINK; }
 
-   async function verificarAcesso() {
+    async function verificarAcesso() {
         const overlay = document.getElementById('paywall-overlay');
         const urlParams = new URLSearchParams(window.location.search);
         
-        // Se a URL contiver o status=success vindo do Stripe redirecionado
         if (urlParams.get('status') === 'success') {
             localStorage.setItem('app_pago', 'true');
-            // Remove o parâmetro da URL de forma limpa sem recarregar a página inteira
             window.history.replaceState({}, document.title, window.location.pathname);
-            
-            // Força o overlay a sumir imediatamente na hora da validação
             if (overlay) overlay.style.display = 'none';
-            
             mostrarAlerta("Acesso liberado! Bem-vindo à sua jornada. 🎉", "🚀");
             await carregarTudo();
-            return; // Corta a execução para evitar duplicidade
+            return;
         }
 
         const jaPagou = localStorage.getItem('app_pago') === 'true';
@@ -425,170 +329,125 @@
     }
 
     function verificarNovasConquistas() {
-    // Garante que o banco local possui dados antes de rodar a validação
-    if (!dbGlobal || dbGlobal.length === 0) return;
+        if (!dbGlobal || dbGlobal.length === 0) return;
 
-    // Extrai uma lista de UFs únicas visitadas de forma plana
-    const visitadosUfs = [...new Set(dbGlobal.map(v => v.uf))];
-    
-    const metas = [
-        {id: 'm1',  n:1,  l:'Primeiro Passo',   i:'🌱'}, 
-        {id: 'm5',  n:5,  l:'Viajante',         i:'🚗'},
-        {id: 'm10', n:10, l:'Explorador',       i:'✈️'}, 
-        {id: 'm20', n:20, l:'Aventureiro',       i:'⛰️'},
-        {id: 'm25', n:25, l:'Nômade',           i:'🌍'}, 
-        {id: 'm27', n:27, l:'Dono do Brasil',   i:'👑'}
-    ];
-    
-    const celebrados = JSON.parse(localStorage.getItem('conquistas_vistas') || "[]");
-    let novas = [];
-
-    // 1. Validação dos marcos de quantidade de estados
-    metas.forEach(m => { 
-        if (visitadosUfs.length >= m.n && !celebrados.includes(m.id)) {
-            novas.push({nome: m.l, icone: m.i, id: m.id});
-        }
-    });
-
-    // 2. Validação da conquista especial de praia
-    let temPraia = dbGlobal.some(v => v.praia);
-    if (temPraia && !celebrados.includes('praia')) {
-        novas.push({nome: 'Pé na Areia', icone: '🏖️', id: 'praia'});
-    }
-
-    // 3. Validação do fechamento completo das Regiões geográficas
-    for (let r in REGIOES) {
-        const reg = REGIOES[r];
-        const vNaReg = reg.UFs.filter(u => visitadosUfs.includes(u));
-        const ok = vNaReg.length === reg.UFs.length;
+        const visitadosUfs = [...new Set(dbGlobal.map(v => v.uf))];
+        const metas = [
+            {id: 'm1',  n:1,  l:'Primeiro Passo',   i:'🌱'}, 
+            {id: 'm5',  n:5,  l:'Viajante',         i:'🚗'},
+            {id: 'm10', n:10, l:'Explorador',       i:'✈️'}, 
+            {id: 'm20', n:20, l:'Aventureiro',       i:'⛰️'},
+            {id: 'm25', n:25, l:'Nômade',           i:'🌍'}, 
+            {id: 'm27', n:27, l:'Dono do Brasil',   i:'👑'}
+        ];
         
-        if (ok && !celebrados.includes('reg_' + r)) {
-            novas.push({nome: `Região ${r} Concluída`, icone: reg.icon, id: 'reg_' + r});
-        }
-    }
+        const celebrados = JSON.parse(localStorage.getItem('conquistas_vistas') || "[]");
+        let novas = [];
 
-    // Se houver novos desbloqueios, empilha na fila de animação e salva no disco
-    if (novas.length > 0) {
-        filaDeConquistas = [...filaDeConquistas, ...novas];
-        localStorage.setItem('conquistas_vistas', JSON.stringify([...celebrados, ...novas.map(n => n.id)]));
-        
-        // Se o modal visual não estiver aberto na tela, dispara o gatilho da fila
-        if (document.getElementById('modal-celebracao').style.display !== 'flex') {
-            mostrarProximaConquistaDaFila();
-        }
-    }
-}
-
-    function renderTimeline() {
-    const lista = document.getElementById('timeline-list');
-    if (!lista) return;
-    lista.innerHTML = '';
-    
-    // Ordena por data (mais recente primeiro)
-    const ordenadas = [...dbGlobal].sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate));
-
-    ordenadas.forEach(v => {
-        let track = '';
-        let bullets = '';
-        
-        // URLs temporárias para fotos e vídeos
-        const fotosUrls = v.fotos ? v.fotos.map(f => URL.createObjectURL(f)) : [];
-        const videosUrls = v.videos ? v.videos.map(f => URL.createObjectURL(f)) : [];
-        const todasMidias = [...fotosUrls, ...videosUrls];
-
-        todasMidias.forEach((url, idx) => {
-            const isVideo = idx >= fotosUrls.length; // Se o índice for maior que o total de fotos, é vídeo
-            
-            if (isVideo) {
-                track += `<video src="${url}" class="img-slide" style="width:100%; height:200px; object-fit:cover;" controls muted playsinline></video>`;
-            } else {
-                track += `<img src="${url}" class="img-slide" style="width:100%; height:200px; object-fit:cover;">`;
+        metas.forEach(m => { 
+            if (visitadosUfs.length >= m.n && !celebrados.includes(m.id)) {
+                novas.push({nome: m.l, icone: m.i, id: m.id});
             }
-            
-            bullets += `<div class="bullet-tl-${v.id}" style="width:5px; height:5px; border-radius:50%; background:${idx === 0 ? 'white' : 'rgba(255,255,255,0.4)'}; transition:0.3s;"></div>`;
         });
 
-        const item = document.createElement('div');
-        item.className = 'timeline-item';
-        item.innerHTML = `
-            <div class="t-dot"></div>
-            <div class="t-card" style="padding: 12px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                    <div>
-                        <b style="color: var(--primary); font-size: 11px;">${v.uf.replace('BR','')}</b>
-                        <h4 style="margin:0; font-size: 16px; font-weight:800;">${v.cidade}</h4>
-                    </div>
-                    <span style="font-size: 10px; color: var(--text-sub);">${v.data}</span>
-                </div>
-                <div class="carousel-fotos" id="tl-car-${v.id}" style="height:200px; position:relative; border-radius: 15px;" 
-                     ontouchstart="hTS(event)" 
-                     ontouchmove="hTM_TL(event, '${v.id}', ${todasMidias.length})">
-                    <div class="track-fotos" style="display:flex; transition:0.4s ease-out; height:100%;">
-                        ${track || '<div style="width:100%; height:200px; background:#eee; display:flex; align-items:center; justify-content:center;">📍 Sem mídias</div>'}
-                    </div>
-                    <div style="position:absolute; bottom:10px; left:0; width:100%; display:flex; justify-content:center; gap:4px; pointer-events:none;">
-                        ${bullets}
-                    </div>
-                </div>
-                <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-size: 12px; font-weight: 800; color: var(--money)">R$ ${v.total.toLocaleString('pt-BR')}</span>
-                    <button onclick="removerViagem('${v.id}', '${v.cidade}')" style="background:none; border:none; font-size:14px; opacity:0.3;">🗑️</button>
-                </div>
-            </div>`;
-        lista.appendChild(item);
-    });
-}
+        let temPraia = dbGlobal.some(v => v.praia);
+        if (temPraia && !celebrados.includes('praia')) {
+            novas.push({nome: 'Pé na Areia', icone: '🏖️', id: 'praia'});
+        }
+
+        for (let r in REGIOES) {
+            const reg = REGIOES[r];
+            const vNaReg = reg.UFs.filter(u => visitadosUfs.includes(u));
+            const ok = vNaReg.length === reg.UFs.length;
+            
+            if (ok && !celebrados.includes('reg_' + r)) {
+                novas.push({nome: `Região ${r} Concluída`, icone: reg.icon, id: 'reg_' + r});
+            }
+        }
+
+        if (novas.length > 0) {
+            filaDeConquistas = [...filaDeConquistas, ...novas];
+            localStorage.setItem('conquistas_vistas', JSON.stringify([...celebrados, ...novas.map(n => n.id)]));
+            
+            if (document.getElementById('modal-celebracao').style.display !== 'flex') {
+                mostrarProximaConquistaDaFila();
+            }
+        }
+    }
+
+    function compartilharNoStories() {
+        const card = document.getElementById('captura-card');
+        html2canvas(card, { backgroundColor: '#1e293b', scale: 2 }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'conquista-jornada.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            mostrarAlerta("Imagem gerada! Compartilhe o arquivo baixado nos seus Stories. 📸", "✨");
+        });
+    }
+
+    function renderTimeline() {
+        const lista = document.getElementById('timeline-list');
+        if (!lista) return;
+        lista.innerHTML = '';
+        
+        const ordenadas = [...dbGlobal].sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate));
+
+        ordenadas.forEach(v => {
+            let track = '', bullets = '';
+            const fotosUrls = v.fotos ? v.fotos.map(f => URL.createObjectURL(f)) : [];
+            const videosUrls = v.videos ? v.videos.map(f => URL.createObjectURL(f)) : [];
+            const todasMidias = [...fotosUrls, ...videosUrls];
+
+            todasMidias.forEach((url, idx) => {
+                const isVideo = idx >= fotosUrls.length;
+                if (isVideo) {
+                    track += `<video src="${url}" class="img-slide" style="width:100%; height:200px; object-fit:cover;" controls muted playsinline></video>`;
+                } else {
+                    track += `<img src="${url}" class="img-slide" style="width:100%; height:200px; object-fit:cover;">`;
+                }
+                bullets += `<div class="bullet-tl-${v.id}" style="width:5px; height:5px; border-radius:50%; background:${idx === 0 ? 'white' : 'rgba(255,255,255,0.4)'}; transition:0.3s;"></div>`;
+            });
+
+            const item = document.createElement('div');
+            item.className = 'timeline-item';
+            item.innerHTML = `<div class="t-dot"></div><div class="t-card" style="padding: 12px;"><div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><div><b style="color: var(--primary); font-size: 11px;">${v.uf.replace('BR','')}</b><h4 style="margin:0; font-size: 16px; font-weight:800;">${v.cidade}</h4></div><span style="font-size: 10px; color: var(--text-sub);">${v.data}</span></div><div class="carousel-fotos" id="tl-car-${v.id}" style="height:200px; position:relative; border-radius: 15px;" ontouchstart="hTS(event)" ontouchmove="hTM_TL(event, '${v.id}', ${todasMidias.length})"><div class="track-fotos" style="display:flex; transition:0.4s ease-out; height:100%;">${track || '<div style="width:100%; height:200px; background:#eee; display:flex; align-items:center; justify-content:center;">📍 Sem mídias</div>'}</div><div style="position:absolute; bottom:10px; left:0; width:100%; display:flex; justify-content:center; gap:4px; pointer-events:none;">${bullets}</div></div><div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 12px; font-weight: 800; color: var(--money)">R$ ${v.total.toLocaleString('pt-BR')}</span><button onclick="removerViagem('${v.id}', '${v.cidade}')" style="background:none; border:none; font-size:14px; opacity:0.3;">🗑️</button></div></div>`;
+            lista.appendChild(item);
+        });
+    }
 
     function renderJornada() {
-    // Mapeia os estados diretamente do array unificado
-    const visitadosUfs = [...new Set(dbGlobal.map(v => v.uf))];
-    const metas = [
-        {n:1,  l:'Primeiro Passo', i:'🌱'}, 
-        {n:5,  l:'Viajante',       i:'🚗'}, 
-        {n:10, l:'Explorador',     i:'✈️'}, 
-        {n:20, l:'Aventureiro',     i:'⛰️'}, 
-        {n:25, l:'Nômade',         i:'🌍'}, 
-        {n:27, l:'Dono do Brasil', i:'👑'}
-    ];
-    
-    // 1. Gera o HTML das metas padrão por quantidade de UF
-    let html = metas.map(m => {
-        const ok = visitadosUfs.length >= m.n;
-        return `
-            <div class="badge ${ok ? 'active' : 'locked'}" onclick="if(${!ok}) mostrarAlerta('Faltam ${m.n - visitadosUfs.length} estados para liberar este troféu!', '🏃')">
-                <div class="b-icon">${m.i}</div>
-                <div class="badge-name">${m.l}</div>
-            </div>
-        `;
-    }).join('');
-    
-    // 2. Gera o HTML da medalha de praia
-    let temPraia = dbGlobal.some(v => v.praia);
-    html += `
-        <div class="badge ${temPraia ? 'active' : 'locked'}" onclick="if(${!temPraia}) mostrarAlerta('Registre uma viagem marcando a opção de Praia para liberar!', '🏖️')">
-            <div class="b-icon">🏖️</div>
-            <div class="badge-name">Pé na areia</div>
-        </div>
-    `;
-    
-    // 3. Gera o HTML das medalhas regionais com cores customizadas caso ativo
-    for (let r in REGIOES) {
-        const reg = REGIOES[r];
-        const vNaReg = reg.UFs.filter(u => visitadosUfs.includes(u));
-        const ok = vNaReg.length === reg.UFs.length;
+        const visitadosUfs = [...new Set(dbGlobal.map(v => v.uf))];
+        const metas = [{n:1, l:'Primeiro Passo', i:'🌱'}, {n:5, l:'Viajante', i:'🚗'}, {n:10, l:'Explorador', i:'✈️'}, {n:20, l:'Aventureiro', i:'⛰️'}, {n:25, l:'Nômade', i:'🌍'}, {n:27, l:'Dono do Brasil', i:'👑'}];
         
-        html += `
-            <div class="badge ${ok ? 'active' : 'locked'}" onclick="msgRegiao('${r}', ${ok})">
-                <div class="b-icon" style="${ok ? 'background:' + reg.color + '; color:#fff;' : ''}">${reg.icon}</div>
-                <div class="badge-name">${r}</div>
-            </div>
-        `;
+        let html = metas.map(m => `<div class="badge ${visitadosUfs.length >= m.n ? 'active' : 'locked'}" onclick="if(${visitadosUfs.length < m.n}) mostrarAlerta('Faltam ${m.n - visitadosUfs.length} estados para liberar este troféu!', '🏃')"><div class="b-icon">${m.i}</div><div class="badge-name">${m.l}</div></div>`).join('');
+        
+        let temPraia = dbGlobal.some(v => v.praia);
+        html += `<div class="badge ${temPraia ? 'active' : 'locked'}" onclick="if(!${temPraia}) mostrarAlerta('Registre uma viagem marcando a opção de Praia para liberar!', '🏖️')"><div class="b-icon">🏖️</div><div class="badge-name">Pé na areia</div></div>`;
+        
+        for (let r in REGIOES) {
+            const reg = REGIOES[r];
+            const vNaReg = reg.UFs.filter(u => visitadosUfs.includes(u));
+            const ok = vNaReg.length === reg.UFs.length;
+            html += `<div class="badge ${ok ? 'active' : 'locked'}" onclick="msgRegiao('${r}', ${ok})"><div class="b-icon" style="${ok ? 'background:'+reg.color+';color:#fff' : ''}">${reg.icon}</div><div class="badge-name">${r}</div></div>`;
+        }
+        
+        document.getElementById('grid-conquistas').innerHTML = html;
     }
-    
-    // Injeta o bloco completo de badges no container visível
-    const grid = document.getElementById('grid-conquistas');
-    if (grid) grid.innerHTML = html;
-}
+
+    function msgRegiao(r, ok) { 
+        if(ok) return; 
+        const visitadosUfs = [...new Set(dbGlobal.map(v => v.uf))];
+        const mapaNomes = {
+            'BRAC':'Acre','BRAM':'Amazonas','BRRR':'Roraima','BRRO':'Rondônia','BRPA':'Pará','BRAP':'Amapá','BRTO':'Tocantins',
+            'BRMA':'Maranhão','BRPI':'Piauí','BRCE':'Ceará','BRRN':'Rio Grande do Norte','BRPB':'Paraíba','BRPE':'Pernambuco','BRAL':'Alagoas','BRSE':'Sergipe','BRBA':'Bahia',
+            'BRMT':'Mato Grosso','BRMS':'Mato Grosso do Sul','BRGO':'Goiás','BRDF':'Distrito Federal',
+            'BRMG':'Minas Gerais','BRSP':'São Paulo','BRRJ':'Rio de Janeiro','BRES':'Espírito Santo',
+            'BRPR':'Paraná','BRSC':'Santa Catarina','BRRS':'Rio Grande do Sul'
+        };
+        const faltantes = REGIOES[r].UFs.filter(u => !visitadosUfs.includes(u)).map(u => mapaNomes[u]); 
+        mostrarAlerta(`Faltam na Região ${r}: ${faltantes.join(', ')}`, REGIOES[r].icon); 
+    }
 
     function renderGastos() {
         let html = '', totalGeral = 0;
@@ -614,58 +473,50 @@
     }
 
     async function salvarViagem() {
-    const elCidade = document.getElementById('txt-cidade');
-    const elData = document.getElementById('txt-data');
-    const elUf = document.getElementById('sel-uf');
-    const elFoto = document.getElementById('inp-foto');
-    const elPraia = document.getElementById('chk-praia');
+        const elCidade = document.getElementById('txt-cidade');
+        const elData = document.getElementById('txt-data');
+        const elUf = document.getElementById('sel-uf');
+        const elFoto = document.getElementById('inp-foto');
+        const elPraia = document.getElementById('chk-praia');
 
-    if (!elCidade.value.trim() || !elData.value) {
-        return mostrarAlerta("Cidade e Data são obrigatórios!", "📍");
+        if (!elCidade.value.trim() || !elData.value) {
+            return mostrarAlerta("Cidade e Data são obrigatórios!", "📍");
+        }
+
+        const allFiles = Array.from(elFoto.files);
+        const fotos = allFiles.filter(f => f.type.startsWith('image/')).slice(0, 4);
+        const videos = allFiles.filter(f => f.type.startsWith('video/')).slice(0, 1);
+
+        if (fotos.length === 0 && videos.length === 0) {
+            return mostrarAlerta("Selecione ao menos uma foto ou vídeo!", "📸");
+        }
+
+        const h = parseFloat(document.getElementById('v-hosp').value) || 0;
+        const t = parseFloat(document.getElementById('v-trans').value) || 0;
+        const al = parseFloat(document.getElementById('v-alime').value) || 0;
+        const at = parseFloat(document.getElementById('v-atrac').value) || 0;
+
+        const trip = { 
+            id: Date.now().toString(), uf: elUf.value, cidade: elCidade.value, 
+            data: elData.value.split('-').reverse().join('/'), rawDate: elData.value, 
+            fotos: fotos, videos: videos, h, t, al, at, praia: elPraia.checked, total: h + t + al + at 
+        };
+
+        await dbSalvar(trip);
+        
+        // CORREÇÃO DE FLUXO: Executa a leitura e renderização ANTES de limpar o input do DOM
+        await carregarTudo(); 
+        
+        ['txt-cidade','txt-data','v-hosp','v-trans','v-alime','v-atrac','inp-foto'].forEach(id => document.getElementById(id).value = ""); 
+        elPraia.checked = false;
+        
+        mostrarAlerta("Memória salva!", "🚀"); 
+        trocarAba('mapa', document.querySelectorAll('.btn-aba')[0]);
     }
 
-    const allFiles = Array.from(elFoto.files);
-    
-    // Filtro de Mídia (4 fotos e 1 vídeo)
-    const fotos = allFiles.filter(f => f.type.startsWith('image/')).slice(0, 4);
-    const videos = allFiles.filter(f => f.type.startsWith('video/')).slice(0, 1);
-
-    if (fotos.length === 0 && videos.length === 0) {
-        return mostrarAlerta("Selecione ao menos uma foto ou vídeo!", "📸");
-    }
-
-    const h = parseFloat(document.getElementById('v-hosp').value) || 0;
-    const t = parseFloat(document.getElementById('v-trans').value) || 0;
-    const al = parseFloat(document.getElementById('v-alime').value) || 0;
-    const at = parseFloat(document.getElementById('v-atrac').value) || 0;
-
-    const trip = { 
-        id: Date.now().toString(), 
-        uf: elUf.value, 
-        cidade: elCidade.value, 
-        data: elData.value.split('-').reverse().join('/'), 
-        rawDate: elData.value, 
-        fotos: fotos,   // Array de Blobs
-        videos: videos, // Array de Blobs (máx 1)
-        h, t, al, at, 
-        praia: elPraia.checked, 
-        total: h + t + al + at 
-    };
-
-    await dbSalvar(trip);
-    
-    // Limpeza do formulário
-    ['txt-cidade','txt-data','v-hosp','v-trans','v-alime','v-atrac','inp-foto'].forEach(id => document.getElementById(id).value = ""); 
-    elPraia.checked = false;
-    
-    mostrarAlerta("Memória salva!", "🚀"); 
-    await carregarTudo(); 
-    trocarAba('mapa', document.querySelectorAll('.btn-aba')[0]);
-}
-
-    function removerViagem(id, cidade) {
+    function removerViagem(id, city) {
         const modal = document.getElementById('custom-confirm');
-        document.getElementById('confirm-msg').innerText = `Apagar memória de ${cidade}?`;
+        document.getElementById('confirm-msg').innerText = `Apagar memória de ${city}?`;
         modal.style.display = 'flex';
         document.getElementById('btn-cancelar').onclick = () => modal.style.display = 'none';
         document.getElementById('btn-confirmar').onclick = async () => { await dbApagar(id); modal.style.display = 'none'; await carregarTudo(); };
@@ -686,44 +537,23 @@
         
         viagens.forEach(v => {
             let track = '', bullets = '';
-            
-            // Mapeamento de ObjectURLs para mídias locais
             const fotosUrls = v.fotos ? v.fotos.map(f => URL.createObjectURL(f)) : [];
             const videosUrls = v.videos ? v.videos.map(f => URL.createObjectURL(f)) : [];
             const todasMidias = [...fotosUrls, ...videosUrls];
 
             todasMidias.forEach((url, idx) => {
-                const isVideo = idx >= fotosUrls.length; // Se o índice passou das fotos, é vídeo
-                
+                const isVideo = idx >= fotosUrls.length;
                 if (isVideo) {
                     track += `<video src="${url}" class="img-slide" style="width:100%; height:300px; object-fit:cover;" controls muted playsinline></video>`;
                 } else {
                     track += `<img src="${url}" class="img-slide" style="width:100%; height:300px; object-fit:cover;">`;
                 }
-                
                 bullets += `<div class="bullet-${v.id}" style="width:6px; height:6px; border-radius:50%; background:${idx === 0 ? 'white' : 'rgba(255,255,255,0.4)'}; transition:0.3s;"></div>`;
             });
 
-            h += `<div style="margin-bottom:20px; border-radius:24px; overflow:hidden; position:relative; background:#f1f5f9; box-shadow:0 10px 20px rgba(0,0,0,0.05);">
-                    <div class="carousel-fotos" id="car-${v.id}" style="height:300px; position:relative;" ontouchstart="hTS(event)" ontouchmove="hTM(event, '${v.id}', ${todasMidias.length})">
-                        <div class="track-fotos" style="display:flex; transition:0.4s ease-out; height:100%;">${track}</div>
-                        <div style="position:absolute; bottom:0; left:0; width:100%; background:linear-gradient(to top, rgba(0,0,0,0.8), transparent); padding:15px; box-sizing:border-box; pointer-events:none;">
-                            <div style="display:flex; justify-content:space-between; align-items:flex-end;">
-                                <div>
-                                    <p style="margin:0; font-size:15px; font-weight:700; color:white;">${v.cidade}</p>
-                                    <span style="font-size:10px; color:rgba(255,255,255,0.7); font-weight:600;">${v.data}</span>
-                                </div>
-                                <span style="color:#4ade80; font-weight:800; font-size:13px; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:8px;">R$ ${v.total.toLocaleString('pt-BR')}</span>
-                            </div>
-                            <div style="display:flex; justify-content:center; gap:5px; margin-top:10px;">${bullets}</div>
-                        </div>
-                    </div>
-                </div>`;
+            h += `<div style="margin-bottom:20px; border-radius:24px; overflow:hidden; position:relative; background:#f1f5f9; box-shadow:0 10px 20px rgba(0,0,0,0.05);"><div class="carousel-fotos" id="car-${v.id}" style="height:300px; position:relative;" ontouchstart="hTS(event)" ontouchmove="hTM(event, '${v.id}', ${todasMidias.length})"><div class="track-fotos" style="display:flex; transition:0.4s ease-out; height:100%;">${track}</div><div style="position:absolute; bottom:0; left:0; width:100%; background:linear-gradient(to top, rgba(0,0,0,0.8), transparent); padding:15px; box-sizing:border-box; pointer-events:none;"><div style="display:flex; justify-content:space-between; align-items:flex-end;"><div><p style="margin:0; font-size:15px; font-weight:700; color:white;">${v.cidade}</p><span style="font-size:10px; color:rgba(255,255,255,0.7); font-weight:600;">${v.data}</span></div><span style="color:#4ade80; font-weight:800; font-size:13px; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:8px;">R$ ${v.total.toLocaleString('pt-BR')}</span></div><div style="display:flex; justify-content:center; gap:5px; margin-top:10px;">${bullets}</div></div></div></div>`;
         });
-        
-        document.getElementById('popup-content').innerHTML = h;
-        document.getElementById('photo-popup').classList.add('show');
-        document.getElementById('popup-overlay').style.display = 'block';
+        document.getElementById('popup-content').innerHTML = h; document.getElementById('photo-popup').classList.add('show'); document.getElementById('popup-overlay').style.display = 'block';
     }
 
     let sX = 0; function hTS(e) { sX = e.touches[0].clientX; }
