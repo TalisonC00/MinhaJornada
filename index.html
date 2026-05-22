@@ -315,12 +315,24 @@
     function fecharPopup() { document.getElementById('photo-popup').classList.remove('show'); document.getElementById('popup-overlay').style.display = 'none'; }
 
     function mostrarProximaConquistaDaFila() {
-        if (filaDeConquistas.length === 0) return;
-        const conquista = filaDeConquistas[0];
-        document.getElementById('celebracao-nome').innerText = conquista.nome;
-        document.getElementById('celebracao-icone').innerText = conquista.icone;
-        document.getElementById('modal-celebracao').style.display = 'flex';
-    }
+    if (filaDeConquistas.length === 0) return;
+    
+    const conquista = filaDeConquistas[0];
+    const elNome = document.getElementById('celebracao-nome');
+    const elIcone = document.getElementById('celebracao-icone');
+    const modal = document.getElementById('modal-celebracao');
+
+    // Força a injeção garantindo que os elementos existem no DOM
+    if (elNome && elIcone && modal) {
+        elNome.innerText = conquista.nome;
+        elIcone.innerText = conquista.icone;
+        modal.style.display = 'flex';
+    } else {
+        console.error("Erro de UI: Elementos do modal de celebração não foram encontrados no HTML.");
+        // Fallback de segurança para PO: usa um alerta nativo caso a UI falhe
+        mostrarAlerta(`Você desbloqueou: ${conquista.nome} ${conquista.icone}`, "🏆");
+      }
+   }
 
     function fecharCelebracaoEProxima() {
         filaDeConquistas.shift();
@@ -329,51 +341,59 @@
     }
 
     function verificarNovasConquistas() {
-        if (!dbGlobal || dbGlobal.length === 0) return;
+    // Se por algum motivo a sincronia falhar, força o bypass preventivo
+    if (!dbGlobal || dbGlobal.length === 0) {
+        return;
+    }
 
-        const visitadosUfs = [...new Set(dbGlobal.map(v => v.uf))];
-        const metas = [
-            {id: 'm1',  n:1,  l:'Primeiro Passo',   i:'🌱'}, 
-            {id: 'm5',  n:5,  l:'Viajante',         i:'🚗'},
-            {id: 'm10', n:10, l:'Explorador',       i:'✈️'}, 
-            {id: 'm20', n:20, l:'Aventureiro',       i:'⛰️'},
-            {id: 'm25', n:25, l:'Nômade',           i:'🌍'}, 
-            {id: 'm27', n:27, l:'Dono do Brasil',   i:'👑'}
-        ];
+    const visitadosUfs = [...new Set(dbGlobal.map(v => v.uf))];
+    const metas = [
+        {id: 'm1',  n:1,  l:'Primeiro Passo',   i:'🌱'}, 
+        {id: 'm5',  n:5,  l:'Viajante',         i:'🚗'},
+        {id: 'm10', n:10, l:'Explorador',       i:'✈️'}, 
+        {id: 'm20', n:20, l:'Aventureiro',       i:'⛰️'},
+        {id: 'm25', n:25, l:'Nômade',           i:'🌍'}, 
+        {id: 'm27', n:27, l:'Dono do Brasil',   i:'👑'}
+    ];
+    
+    const celebrados = JSON.parse(localStorage.getItem('conquistas_vistas') || "[]");
+    let novas = [];
+
+    // 1. Quantidade de estados
+    metas.forEach(m => { 
+        if (visitadosUfs.length >= m.n && !celebrados.includes(m.id)) {
+            novas.push({nome: m.l, icone: m.i, id: m.id});
+        }
+    });
+
+    // 2. Conquista de praia
+    let temPraia = dbGlobal.some(v => v.praia);
+    if (temPraia && !celebrados.includes('praia')) {
+        novas.push({nome: 'Pé na Areia', icone: '🏖️', id: 'praia'});
+    }
+
+    // 3. Conquista das Regiões do Brasil
+    for (let r in REGIOES) {
+        const reg = REGIOES[r];
+        const vNaReg = reg.UFs.filter(u => visitadosUfs.includes(u));
+        const ok = vNaReg.length === reg.UFs.length;
         
-        const celebrados = JSON.parse(localStorage.getItem('conquistas_vistas') || "[]");
-        let novas = [];
-
-        metas.forEach(m => { 
-            if (visitadosUfs.length >= m.n && !celebrados.includes(m.id)) {
-                novas.push({nome: m.l, icone: m.i, id: m.id});
-            }
-        });
-
-        let temPraia = dbGlobal.some(v => v.praia);
-        if (temPraia && !celebrados.includes('praia')) {
-            novas.push({nome: 'Pé na Areia', icone: '🏖️', id: 'praia'});
-        }
-
-        for (let r in REGIOES) {
-            const reg = REGIOES[r];
-            const vNaReg = reg.UFs.filter(u => visitadosUfs.includes(u));
-            const ok = vNaReg.length === reg.UFs.length;
-            
-            if (ok && !celebrados.includes('reg_' + r)) {
-                novas.push({nome: `Região ${r} Concluída`, icone: reg.icon, id: 'reg_' + r});
-            }
-        }
-
-        if (novas.length > 0) {
-            filaDeConquistas = [...filaDeConquistas, ...novas];
-            localStorage.setItem('conquistas_vistas', JSON.stringify([...celebrados, ...novas.map(n => n.id)]));
-            
-            if (document.getElementById('modal-celebracao').style.display !== 'flex') {
-                mostrarProximaConquistaDaFila();
-            }
+        if (ok && !celebrados.includes('reg_' + r)) {
+            novas.push({nome: `Região ${r} Concluída`, icone: reg.icon, id: 'reg_' + r});
         }
     }
+
+    // Se encontrou alguma conquista inédita
+    if (novas.length > 0) {
+        filaDeConquistas = [...filaDeConquistas, ...novas];
+        localStorage.setItem('conquistas_vistas', JSON.stringify([...celebrados, ...novas.map(n => n.id)]));
+        
+        // Executa a abertura garantindo que o navegador terminou de processar o clique
+        setTimeout(() => {
+            mostrarProximaConquistaDaFila();
+        }, 300);
+    }
+}
 
     function compartilharNoStories() {
         const card = document.getElementById('captura-card');
