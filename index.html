@@ -196,22 +196,30 @@
 
     function irParaPagamento() { window.location.href = STRIPE_LINK; }
 
-    async function verificarAcesso() {
+   async function verificarAcesso() {
         const overlay = document.getElementById('paywall-overlay');
         const urlParams = new URLSearchParams(window.location.search);
         
+        // Se a URL contiver o status=success vindo do Stripe redirecionado
         if (urlParams.get('status') === 'success') {
             localStorage.setItem('app_pago', 'true');
+            // Remove o parâmetro da URL de forma limpa sem recarregar a página inteira
             window.history.replaceState({}, document.title, window.location.pathname);
+            
+            // Força o overlay a sumir imediatamente na hora da validação
+            if (overlay) overlay.style.display = 'none';
+            
             mostrarAlerta("Acesso liberado! Bem-vindo à sua jornada. 🎉", "🚀");
+            await carregarTudo();
+            return; // Corta a execução para evitar duplicidade
         }
 
         const jaPagou = localStorage.getItem('app_pago') === 'true';
         if (jaPagou) {
-            overlay.style.display = 'none';
+            if (overlay) overlay.style.display = 'none';
             await carregarTudo();
         } else {
-            overlay.style.display = 'flex';
+            if (overlay) overlay.style.display = 'flex';
         }
     }
 
