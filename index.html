@@ -253,14 +253,14 @@
             window.history.replaceState({}, document.title, window.location.pathname);
             if (overlay) overlay.style.display = 'none';
             mostrarAlerta("Acesso liberado! Bem-vindo à sua jornada. 🎉", "🚀");
-            await carregarTudo();
+            await carregarTudo();verificarNovasConquistas();
             return;
         }
 
         const jaPagou = localStorage.getItem('app_pago') === 'true';
         if (jaPagou) {
             if (overlay) overlay.style.display = 'none';
-            await carregarTudo();
+            await carregarTudo();verificarNovasConquistas();
         } else {
             if (overlay) overlay.style.display = 'flex';
         }
@@ -469,7 +469,7 @@
         const ufs = [...new Set(dbGlobal.map(v => v.uf))];
         ufs.forEach(u => { const el = document.getElementById(u); if(el) el.classList.add('visitado'); });
         document.getElementById('info').innerText = `ESTADOS CONQUISTADOS: ${ufs.length}`;
-        verificarNovasConquistas(); renderTimeline(); renderGastos(); renderJornada();
+        renderTimeline(); renderGastos(); renderJornada();
     }
 
     async function salvarViagem() {
