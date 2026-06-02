@@ -119,7 +119,7 @@
             <button class="close-paywall" onclick="fecharPaywall()">✕</button>
             <div class="pay-app-icon">🗺️</div>
             <h1 class="pay-title">Minha Jornada</h1>
-            <p class="pay-desc">Esse é o seu diário de bordo oficial!</p>
+            <p class="pay-desc">Esse é o seu diário de bordo oficial!🇧🇷 </p>
             
             <div class="pay-features">
                 <div class="feature-item">📍<span>Mapa do Brasil Interativo e Colorido</span></div>
@@ -138,7 +138,26 @@
             </div>
         </div>
     </div>
+     <!-- CONTAINER EXCLUSIVO PARA O PRINT DOS STORIES (INVISÍVEL NA TELA) -->
+<div id="container-print-stories" style="position: fixed; top: -9999px; left: -9999px; width: 1080px; height: 1920px; background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 120px 80px; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif;">
+    
+    <!-- Topo do Card -->
+    <div style="text-align: center; width: 100%;">
+        <span style="font-size: 32px; font-weight: 800; color: #FF4B5C; text-transform: uppercase; letter-spacing: 6px; display: block; margin-bottom: 16px;">Nossa Jornada</span>
+        <div style="width: 80px; height: 4px; background: #FF4B5C; margin: 0 auto; border-radius: 2px;"></div>
+    </div>
 
+    <!-- Moldura Flutuante do Mapa -->
+    <div id="molde-mapa-print" style="width: 100%; height: 1100px; background: #FFFFFF; border-radius: 60px; box-shadow: 0 40px 100px rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; padding: 40px; box-sizing: border-box; overflow: hidden;">
+        <!-- O SVG do mapa será clonado dinamicamente aqui dentro pelo JS -->
+    </div>
+
+    <!-- Rodapé Minimalista (Assinatura do App) -->
+    <div style="text-align: center; width: 100%; opacity: 0.7;">
+        <p style="font-size: 28px; font-weight: 700; color: #FFFFFF; margin: 0 0 8px 0; letter-spacing: -0.5px;">Construindo memórias... 🇧🇷 </p>
+        <span style="font-size: 20px; font-weight: 600; color: #64748B;">Minha Jornada App:@prets_ia</span>
+    </div>
+</div>
     <div class="header">
         <h3> 📸 Minha Jornada</h3>
         <span id="info">ESTADOS CONQUISTADOS: 0</span>
@@ -390,15 +409,53 @@
     }
 
     function compartilharNoStories() {
-        const card = document.getElementById('captura-card');
-        html2canvas(card, { backgroundColor: '#1e293b', scale: 2 }).then(canvas => {
+    const mapaOriginal = document.querySelector('#svg-container svg');
+    const containerPrint = document.getElementById('container-print-stories');
+    const moldeMapa = document.getElementById('molde-mapa-print');
+    
+    if (!mapaOriginal || !containerPrint || !moldeMapa) {
+        return mostrarAlerta("Erro ao preparar a imagem elegante do mapa.", "❌");
+    }
+
+    // Fecha o modal de celebração para limpar o fundo visual do usuário
+    document.getElementById('modal-celebracao').style.display = 'none';
+
+    // 1. Limpa o molde de prints anteriores e clona o mapa atualizado com as cores preenchidas
+    moldeMapa.innerHTML = '';
+    const mapaClonado = mapaOriginal.cloneNode(true);
+    
+    // Ajusta as propriedades do clone para preencher o card de alta definição
+    mapaClonado.style.width = "100%";
+    mapaClonado.style.height = "100%";
+    
+    // Remove o ID clonado para não dar conflito de seletores no DOM
+    mapaClonado.removeAttribute('id'); 
+    moldeMapa.appendChild(mapaClonado);
+
+    // 2. Aguarda o navegador renderizar o clone no container invisível
+    setTimeout(() => {
+        html2canvas(containerPrint, { 
+            width: 1080,
+            height: 1920,
+            scale: 1, // Fixa na proporção exata de Stories de alta fidelidade
+            useCORS: true,
+            logging: false
+        }).then(canvas => {
             const link = document.createElement('a');
-            link.download = 'conquista-jornada.png';
+            link.download = 'nossa-jornada-stories.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
-            mostrarAlerta("Imagem gerada! Compartilhe o arquivo baixado nos seus Stories. 📸", "✨");
+            
+            // Limpa o molde após o print para liberar memória do celular
+            moldeMapa.innerHTML = '';
+            
+            mostrarAlerta("Compartilhe no seu Instagram", "📸");
+        }).catch(err => {
+            console.error("Erro ao gerar o layout elegante:", err);
+            mostrarAlerta("Falha ao criar o design dos Stories.", "❌");
         });
-    }
+    }, 200);
+}
 
     function renderTimeline() {
         const lista = document.getElementById('timeline-list');
