@@ -270,7 +270,7 @@
         if (urlParams.get('status') === 'success') {
             localStorage.setItem('app_pago', 'true');
             window.history.replaceState({}, document.title, window.location.pathname);
-            mostrarAlerta("Acesso premium liberado! 🎉", "🚀");
+            mostrarAlerta("Acesso liberado! 🎉", "🚀");
         }
 
         isPremium = localStorage.getItem('app_pago') === 'true';
@@ -391,86 +391,80 @@
 
     function compartilharNoStories() {
     const mapaCard = document.querySelector('.mapa-card');
-    // Pega a conquista atual da fila para personalizar o texto e o ícone do Stories
     const conquistaAtual = filaDeConquistas[0] || { nome: "Nova Conquista", icone: "🏆" };
     
     if (!mapaCard) {
         return mostrarAlerta("Não foi possível localizar o mapa para gerar o print.", "❌");
     }
 
-    // Oculta o botão de reset e fecha o modal para limpar a foto
+    // Esconde os controles e o modal para limpar o fundo do print
     const btnReset = mapaCard.querySelector('button');
     if (btnReset) btnReset.style.opacity = '0';
     document.getElementById('modal-celebracao').style.display = 'none';
 
-    // PASSO 1: Captura o mapa exatamente como ele está na tela (perfeito e centralizado)
+    // 1. Tira o print do mapa limpo na resolução atual
     html2canvas(mapaCard, { 
         backgroundColor: '#ffffff',
-        scale: 2, // Melhora a qualidade interna do mapa
+        scale: 2, 
         useCORS: true,
         logging: false
     }).then(mapCanvas => {
-        // Restaura o botão de reset na tela do usuário imediatamente
         if (btnReset) btnReset.style.opacity = '1';
         
-        // Transforma o mapa em uma imagem estática
         const mapImageUrl = mapCanvas.toDataURL('image/png');
 
-        // PASSO 2: Cria a estrutura premium de Stories em memória (padrão 1080x1920)
+        // 2. Cria o canvas do Stories com estética premium e minimalista
         const wrapperPrint = document.createElement('div');
         wrapperPrint.style.cssText = `
             position: fixed; top: -9999px; left: -9999px; width: 1080px; height: 1920px;
-            background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+            background: linear-gradient(180deg, #090D16 0%, #1E293B 100%);
             display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-            padding: 120px 60px; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif;
+            padding: 130px 70px 100px 70px; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif;
         `;
 
         wrapperPrint.innerHTML = `
-            <!-- Título do Topo -->
             <div style="text-align: center; width: 100%;">
-                <span style="font-size: 36px; font-weight: 800; color: #FF4B5C; text-transform: uppercase; letter-spacing: 8px; display: block; margin-bottom: 16px;">Nossa Jornada</span>
-                <div style="width: 100px; height: 4px; background: #FF4B5C; margin: 0 auto; border-radius: 2px;"></div>
+                <span style="font-size: 38px; font-weight: 900; color: #FFFFFF; text-transform: uppercase; letter-spacing: 12px; display: block; margin-bottom: 14px;">NOSSA JORNADA</span>
+                <div style="width: 70px; height: 4px; background: #FF4B5C; margin: 0 auto; border-radius: 4px;"></div>
             </div>
 
-            <!-- Card de Destaque da Conquista Dinâmica -->
-            <div style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); padding: 20px 32px; border-radius: 28px; display: flex; align-items: center; gap: 18px; box-shadow: 0 20px 45px rgba(0,0,0,0.3); backdrop-filter: blur(8px);">
-                <span style="font-size: 44px;">${conquistaAtual.icone}</span>
+            <div style="background: rgba(255, 255, 255, 0.04); border: 1.5px solid rgba(255, 255, 255, 0.1); padding: 24px 44px; border-radius: 32px; display: flex; align-items: center; gap: 20px; box-shadow: 0 25px 50px rgba(0,0,0,0.4); backdrop-filter: blur(12px); width: fit-content;">
+                <span style="font-size: 52px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));">${conquistaAtual.icone}</span>
                 <div style="text-align: left;">
-                    <span style="font-size: 13px; font-weight: 800; color: #FACC15; display: block; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 2px;">Troféu Desbloqueado!</span>
-                    <span style="font-size: 24px; font-weight: 700; color: #FFFFFF;">${conquistaAtual.nome}</span>
+                    <span style="font-size: 12px; font-weight: 800; color: #FACC15; display: block; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 4px;">CONQUISTA DESBLOQUEADA!</span>
+                    <span style="font-size: 26px; font-weight: 800; color: #FFFFFF; letter-spacing: -0.5px;">${conquistaAtual.nome}</span>
                 </div>
             </div>
 
-            <!-- Moldura Premium com a Imagem do Mapa Centralizada -->
-            <div style="width: 100%; height: 1150px; background: #FFFFFF; border-radius: 56px; box-shadow: 0 40px 90px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; padding: 40px; box-sizing: border-box; overflow: hidden;">
-                <img src="${mapImageUrl}" style="width: 100%; height: 100%; object-fit: contain;">
+            <div style="width: 100%; height: 1100px; background: #FFFFFF; border-radius: 56px; box-shadow: 0 45px 100px rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; padding: 50px; box-sizing: border-box;">
+                <img src="${mapImageUrl}" style="width: 100%; height: 100%; object-fit: contain; border-radius: 12px;">
             </div>
 
-            <!-- Rodapé Assinado -->
-            <div style="text-align: center; width: 100%; opacity: 0.9;">
-                <p style="font-size: 28px; font-weight: 700; color: #FFFFFF; margin: 0 0 12px 0; letter-spacing: -0.5px;">Construindo memórias... 🇧🇷</p>
-                <span style="font-size: 20px; font-weight: 600; color: #64748B;">Minha Jornada App: @prets_ia</span>
+            <div style="text-align: center; width: 100%;">
+                <p style="font-size: 28px; font-weight: 700; color: #FFFFFF; margin: 0 0 10px 0; opacity: 0.95; letter-spacing: -0.3px;">Eternizando cada quilômetro juntos... 👩‍❤️‍👨</p>
+                <span style="font-size: 20px; font-weight: 700; color: #FF4B5C; letter-spacing: 1px; opacity: 0.85;">Minha Jornada App • @prets_ia</span>
             </div>
         `;
 
         document.body.appendChild(wrapperPrint);
 
-        // PASSO 3: Bate o print final do conjunto completo sem bugar o mapa original
+        // 3. Renderiza o pôster final
         setTimeout(() => {
             html2canvas(wrapperPrint, {
                 width: 1080,
                 height: 1920,
                 scale: 1,
-                logging: false
+                logging: false,
+                useCORS: true
             }).then(storyCanvas => {
                 const link = document.createElement('a');
-                link.download = `minha-conquista-${conquistaAtual.nome.toLowerCase().replace(/ /g, "-")}.png`;
+                link.download = `minha-jornada-${conquistaAtual.nome.toLowerCase().replace(/ /g, "-")}.png`;
                 link.href = storyCanvas.toDataURL('image/png');
                 link.click();
 
-                // Remove o clone invisível da memória
+                // Destrói o elemento temporário da memória do aparelho
                 wrapperPrint.remove();
-                mostrarAlerta("Compartilhe com sua Rede!", "📸");
+                mostrarAlerta("Compartilhe com sua Rede.", "📸");
             });
         }, 200);
 
