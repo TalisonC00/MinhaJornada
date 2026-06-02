@@ -462,8 +462,12 @@
                 link.href = storyCanvas.toDataURL('image/png');
                 link.click();
 
-                // Destrói o elemento temporário da memória do aparelho
+                // Destrói o elemento temporário da memória
                 wrapperPrint.remove();
+                
+                // CORREÇÃO CRÍTICA: Avança a fila para tirar a trava se houver mais conquistas
+                fecharCelebracaoEProxima();
+                
                 mostrarAlerta("Compartilhe com sua Rede.", "📸");
             });
         }, 200);
