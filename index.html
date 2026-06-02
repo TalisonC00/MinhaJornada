@@ -406,7 +406,7 @@
     const conquistaAtual = filaDeConquistas[0] || { nome: "Nova Conquista", icone: "🏆" };
     
     if (!mapaCard) {
-        return mostrarAlerta("Não foi possível localizar o mapa para gerar o print.", "❌");
+        return mostrarAlerta("Não foi possível localizar o mapa para gerar o compartilhamento.", "❌");
     }
 
     // Esconde os controles e o modal para limpar o fundo do print
@@ -453,14 +453,14 @@
             </div>
 
             <div style="text-align: center; width: 100%;">
-                <p style="font-size: 28px; font-weight: 700; color: #FFFFFF; margin: 0 0 10px 0; opacity: 0.95; letter-spacing: -0.3px;">Eternizando cada Memória...🇧🇷</p>
-                <span style="font-size: 20px; font-weight: 700; color: #FF4B5C; letter-spacing: 1px; opacity: 0.85;">Minha Jornada • @prets_ia</span>
+                <p style="font-size: 28px; font-weight: 700; color: #FFFFFF; margin: 0 0 10px 0; opacity: 0.95; letter-spacing: -0.3px;">Eternizando cada memória 🇧🇷</p>
+                <span style="font-size: 20px; font-weight: 700; color: #FF4B5C; letter-spacing: 1px; opacity: 0.85;">Apps Personalizados• @prets_ia</span>
             </div>
         `;
 
         document.body.appendChild(wrapperPrint);
 
-        // 3. Renderiza o pôster final
+        // 3. Renderiza o pôster em background e chama a API de Compartilhamento Nativo
         setTimeout(() => {
             html2canvas(wrapperPrint, {
                 width: 1080,
@@ -468,19 +468,40 @@
                 scale: 1,
                 logging: false,
                 useCORS: true
-            }).then(storyCanvas => {
-                const link = document.createElement('a');
-                link.download = `minha-jornada-${conquistaAtual.nome.toLowerCase().replace(/ /g, "-")}.png`;
-                link.href = storyCanvas.toDataURL('image/png');
-                link.click();
+            }).then(async storyCanvas => {
+                
+                // Converte o canvas para Blob para poder criar o arquivo virtual
+                storyCanvas.toBlob(async (blob) => {
+                    const nomeDoArquivo = `nossa-conquista-${conquistaAtual.nome.toLowerCase().replace(/ /g, "-")}.png`;
+                    
+                    // Cria um arquivo virtual aceito pelo sistema operacional do celular
+                    const file = new File([blob], nomeDoArquivo, { type: "image/png" });
+                    
+                    // Limpa a div temporária da memória
+                    wrapperPrint.remove();
+                    fecharCelebracaoEProxima();
 
-                // Destrói o elemento temporário da memória
-                wrapperPrint.remove();
-                
-                // CORREÇÃO CRÍTICA: Avança a fila para tirar a trava se houver mais conquistas
-                fecharCelebracaoEProxima();
-                
-                mostrarAlerta("Compartilhe com sua Rede.", "📸");
+                    // Verifica se o aparelho suporta o envio direto de arquivos (PWA/Mobile)
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        try {
+                            await navigator.share({
+                                files: [file],
+                                title: 'Minha Conquista',
+                                text: `Olha o troféu que desbloquei no Minha Jornada: ${conquistaAtual.nome}!`
+                            });
+                        } catch (err) {
+                            console.log("Compartilhamento cancelado ou falhou:", err);
+                        }
+                    } else {
+                        // Fallback de Segurança: Se abrir pelo Computador/Navegador antigo que não aceita Share API, ele faz o download automático
+                        const link = document.createElement('a');
+                        link.download = nomeDoArquivo;
+                        link.href = storyCanvas.toDataURL('image/png');
+                        link.click();
+                        mostrarAlerta("Download concluído!", "");
+                    }
+                }, 'image/png');
+
             });
         }, 200);
 
