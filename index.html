@@ -139,22 +139,22 @@
         </div>
     </div>
      <!-- CONTAINER EXCLUSIVO PARA O PRINT DOS STORIES (INVISÍVEL NA TELA) -->
-<div id="container-print-stories" style="position: fixed; top: -9999px; left: -9999px; width: 1080px; height: 1920px; background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 120px 80px; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif;">
+<div id="container-print-stories" style="position: fixed; top: -9999px; left: -9999px; width: 1080px; height: 1920px; background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 140px 60px; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif;">
     
     <!-- Topo do Card -->
     <div style="text-align: center; width: 100%;">
-        <span style="font-size: 32px; font-weight: 800; color: #FF4B5C; text-transform: uppercase; letter-spacing: 6px; display: block; margin-bottom: 16px;">Nossa Jornada</span>
-        <div style="width: 80px; height: 4px; background: #FF4B5C; margin: 0 auto; border-radius: 2px;"></div>
+        <span style="font-size: 36px; font-weight: 800; color: #FF4B5C; text-transform: uppercase; letter-spacing: 8px; display: block; margin-bottom: 16px;">Nossa Jornada</span>
+        <div style="width: 100px; height: 4px; background: #FF4B5C; margin: 0 auto; border-radius: 2px;"></div>
     </div>
 
-    <!-- Moldura Flutuante do Mapa -->
-    <div id="molde-mapa-print" style="width: 100%; height: 1100px; background: #FFFFFF; border-radius: 60px; box-shadow: 0 40px 100px rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; padding: 40px; box-sizing: border-box; overflow: hidden;">
-        <!-- O SVG do mapa será clonado dinamicamente aqui dentro pelo JS -->
+    <!-- Moldura Dinâmica Centralizada do Mapa -->
+    <div id="molde-mapa-print" style="width: 100%; height: 1200px; background: #FFFFFF; border-radius: 48px; box-shadow: 0 30px 70px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; overflow: hidden;">
+        <!-- O container real do mapa será renderizado perfeitamente aqui dentro -->
     </div>
 
-    <!-- Rodapé Minimalista (Assinatura do App) -->
-    <div style="text-align: center; width: 100%; opacity: 0.7;">
-        <p style="font-size: 28px; font-weight: 700; color: #FFFFFF; margin: 0 0 8px 0; letter-spacing: -0.5px;">Construindo memórias... 🇧🇷 </p>
+    <!-- Rodapé Minimalista -->
+    <div style="text-align: center; width: 100%; opacity: 0.9;">
+        <p style="font-size: 28px; font-weight: 700; color: #FFFFFF; margin: 0 0 12px 0; letter-spacing: -0.5px;">Construindo memórias juntos... 🇧🇷</p>
         <span style="font-size: 20px; font-weight: 600; color: #64748B;">Minha Jornada App:@prets_ia</span>
     </div>
 </div>
@@ -409,35 +409,37 @@
     }
 
     function compartilharNoStories() {
-    const mapaOriginal = document.querySelector('#svg-container svg');
+    // Captura os elementos reais da tela e do molde invisível
+    const mapaCardOriginal = document.querySelector('.mapa-card');
     const containerPrint = document.getElementById('container-print-stories');
     const moldeMapa = document.getElementById('molde-mapa-print');
+    const abaMapa = document.getElementById('aba-mapa');
     
-    if (!mapaOriginal || !containerPrint || !moldeMapa) {
-        return mostrarAlerta("Erro ao preparar a imagem elegante do mapa.", "❌");
+    if (!mapaCardOriginal || !containerPrint || !moldeMapa || !abaMapa) {
+        return mostrarAlerta("Erro ao preparar a estrutura de compartilhamento.", "❌");
     }
 
-    // Fecha o modal de celebração para limpar o fundo visual do usuário
+    // Oculta o botão de reset (🔄) para ele não sair no print do Instagram
+    const btnReset = mapaCardOriginal.querySelector('button');
+    if (btnReset) btnReset.style.opacity = '0';
+
+    // Fecha o modal de celebração para limpar a interface visual
     document.getElementById('modal-celebracao').style.display = 'none';
 
-    // 1. Limpa o molde de prints anteriores e clona o mapa atualizado com as cores preenchidas
-    moldeMapa.innerHTML = '';
-    const mapaClonado = mapaOriginal.cloneNode(true);
+    // 1. Guarda temporariamente o estilo original do mapa e move o elemento real para o molde do print
+    const estiloOriginalW = mapaCardOriginal.style.width;
+    const estiloOriginalH = mapaCardOriginal.style.height;
     
-    // Ajusta as propriedades do clone para preencher o card de alta definição
-    mapaClonado.style.width = "100%";
-    mapaClonado.style.height = "100%";
-    
-    // Remove o ID clonado para não dar conflito de seletores no DOM
-    mapaClonado.removeAttribute('id'); 
-    moldeMapa.appendChild(mapaClonado);
+    mapaCardOriginal.style.width = "100%";
+    mapaCardOriginal.style.height = "100%";
+    moldeMapa.appendChild(mapaCardOriginal);
 
-    // 2. Aguarda o navegador renderizar o clone no container invisível
+    // 2. Aguarda o ciclo do DOM estabilizar a renderização física no container de alta resolução
     setTimeout(() => {
         html2canvas(containerPrint, { 
             width: 1080,
             height: 1920,
-            scale: 1, // Fixa na proporção exata de Stories de alta fidelidade
+            scale: 1, // Mantém proporção perfeita de Stories de alta fidelidade
             useCORS: true,
             logging: false
         }).then(canvas => {
@@ -446,15 +448,25 @@
             link.href = canvas.toDataURL('image/png');
             link.click();
             
-            // Limpa o molde após o print para liberar memória do celular
-            moldeMapa.innerHTML = '';
+            // 3. Devolve o mapa para a interface original do aplicativo intacto
+            mapaCardOriginal.style.width = estiloOriginalW;
+            mapaCardOriginal.style.height = estiloOriginalH;
+            abaMapa.appendChild(mapaCardOriginal);
             
-            mostrarAlerta("Compartilhe no seu Instagram", "📸");
+            // Restaura a opacidade do botão de reset na tela do usuário
+            if (btnReset) btnReset.style.opacity = '1';
+            
+            mostrarAlerta("Design elegante gerado! Compartilhe direto no seu Instagram Stories. 📸", "✨");
         }).catch(err => {
             console.error("Erro ao gerar o layout elegante:", err);
+            // Fallback: garante que o mapa volte para a tela se houver erro
+            mapaCardOriginal.style.width = estiloOriginalW;
+            mapaCardOriginal.style.height = estiloOriginalH;
+            abaMapa.appendChild(mapaCardOriginal);
+            if (btnReset) btnReset.style.opacity = '1';
             mostrarAlerta("Falha ao criar o design dos Stories.", "❌");
         });
-    }, 200);
+    }, 250);
 }
 
     function renderTimeline() {
