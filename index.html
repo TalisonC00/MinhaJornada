@@ -391,71 +391,90 @@
 
     function compartilharNoStories() {
     const mapaCard = document.querySelector('.mapa-card');
+    const svgContainer = document.getElementById('svg-container');
     
-    // Busca os dados da conquista atual direto na fila de exibição
+    // Pega a conquista atual da fila para personalizar a imagem
     const conquistaAtual = filaDeConquistas[0] || { nome: "Nova Conquista", icone: "🏆" };
     
-    if (!mapaCard) {
-        return mostrarAlerta("Não foi possível localizar o mapa para gerar o print.", "❌");
+    if (!mapaCard || !svgContainer) {
+        return mostrarAlerta("Não foi possível localizar o mapa para gerar o compartilhamento.", "❌");
     }
 
-    // 1. Oculta os elementos nativos do app que não devem sair no print
+    // Oculta os elementos nativos que não devem sair no Stories
     const btnReset = mapaCard.querySelector('button');
     if (btnReset) btnReset.style.opacity = '0';
     document.getElementById('modal-celebracao').style.display = 'none';
 
-    // 2. Injeta dinamicamente a moldura e os textos da conquista por cima do mapa original
-    const overlayPrint = document.createElement('div');
-    overlayPrint.id = "temp-print-overlay";
-    overlayPrint.style.cssText = `
-        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-        background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
-        display: flex; flex-direction: column; align-items: center; justify-content: space-between;
-        padding: 40px 20px; box-sizing: border-box; z-index: 999; pointer-events: none;
-    `;
+    // 1. BACKUP DOS ESTILOS ORIGINAIS (Para restaurar depois do print)
+    const backupMapaCard = {
+        background: mapaCard.style.background,
+        display: mapaCard.style.display,
+        flexDirection: mapaCard.style.flexDirection,
+        justifyContent: mapaCard.style.justifyContent,
+        padding: mapaCard.style.padding,
+        boxSizing: mapaCard.style.boxSizing
+    };
 
-    overlayPrint.innerHTML = `
-        <!-- Cabeçalho Elegante -->
-        <div style="text-align: center; width: 100%;">
-            <span style="font-size: 14px; font-weight: 800; color: #FF4B5C; text-transform: uppercase; letter-spacing: 4px; display: block; margin-bottom: 6px;">Nossa Jornada</span>
-            <div style="width: 40px; height: 3px; background: #FF4B5C; margin: 0 auto; border-radius: 2px;"></div>
+    const backupSvgContainer = {
+        width: svgContainer.style.width,
+        height: svgContainer.style.height,
+        borderRadius: svgContainer.style.borderRadius,
+        boxShadow: svgContainer.style.boxShadow,
+        overflow: svgContainer.style.overflow,
+        order: svgContainer.style.order,
+        margin: svgContainer.style.margin
+    };
+
+    // 2. MODIFICA A TELA REAL PARA O LAYOUT PREMIUM DE STORIES
+    mapaCard.style.background = "linear-gradient(135deg, #0F172A 0%, #1E293B 100%)";
+    mapaCard.style.display = "flex";
+    mapaCard.style.flexDirection = "column";
+    mapaCard.style.justifyContent = "space-between";
+    mapaCard.style.padding = "40px 24px";
+    mapaCard.style.boxSizing = "border-box";
+
+    // Transforma o container do mapa em uma moldura/card flutuante perfeita
+    svgContainer.style.width = "100%";
+    svgContainer.style.height = "65vh"; 
+    svgContainer.style.borderRadius = "32px";
+    svgContainer.style.boxShadow = "0 25px 60px rgba(0,0,0,0.4)";
+    svgContainer.style.overflow = "hidden";
+    svgContainer.style.margin = "auto 0";
+    svgContainer.style.order = "2"; // Garante o mapa no centro do flexbox
+
+    // 3. INJETA O CABEÇALHO E O DESTAQUE DA CONQUISTA (Ordem 1)
+    const headerDiv = document.createElement('div');
+    headerDiv.style.cssText = "text-align: center; width: 100%; order: 1; display: flex; flex-direction: column; align-items: center; gap: 12px;";
+    headerDiv.innerHTML = `
+        <div>
+            <span style="font-size: 16px; font-weight: 800; color: #FF4B5C; text-transform: uppercase; letter-spacing: 5px; display: block; margin-bottom: 4px;">Nossa Jornada</span>
+            <div style="width: 50px; height: 3px; background: #FF4B5C; margin: 0 auto; border-radius: 2px;"></div>
         </div>
-
-        <!-- Tag com Destaque da Conquista Liberada -->
-        <div style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); padding: 12px 20px; border-radius: 20px; display: flex; align-items: center; gap: 10px; margin-top: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); backdrop-filter: blur(4px);">
-            <span style="font-size: 20px;">${conquistaAtual.icone}</span>
+        
+        <!-- Bloco de Destaque do Troféu -->
+        <div style="background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.15); padding: 10px 16px; border-radius: 20px; display: inline-flex; align-items: center; gap: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); backdrop-filter: blur(4px);">
+            <span style="font-size: 24px;">${conquistaAtual.icone}</span>
             <div style="text-align: left;">
-                <span style="font-size: 10px; font-weight: 800; color: #FACC15; display: block; text-transform: uppercase; letter-spacing: 1px;">Troféu Desbloqueado!</span>
+                <span style="font-size: 9px; font-weight: 800; color: #FACC15; display: block; text-transform: uppercase; letter-spacing: 1px;">Troféu Desbloqueado!</span>
                 <span style="font-size: 14px; font-weight: 700; color: #FFFFFF;">${conquistaAtual.nome}</span>
             </div>
         </div>
-
-        <!-- Área de respiro onde o mapa original vai vazar por baixo do fundo escuro -->
-        <div id="espaco-vazio-mapa" style="flex: 1; width: 100%; margin: 20px 0;"></div>
-
-        <!-- Rodapé Assinado -->
-        <div style="text-align: center; width: 100%; opacity: 0.8;">
-            <p style="font-size: 13px; font-weight: 700; color: #FFFFFF; margin: 0 0 4px 0;">Construindo memórias... 🇧🇷</p>
-            <span style="font-size: 10px; font-weight: 600; color: #64748B;">Minha Jornada App:@prets_ia</span>
-        </div>
     `;
+    mapaCard.appendChild(headerDiv);
 
-    // Adiciona a moldura na tela
-    mapaCard.appendChild(overlayPrint);
+    // 4. INJETA O RODAPÉ EXCLUSIVO (Ordem 3)
+    const footerDiv = document.createElement('div');
+    footerDiv.style.cssText = "text-align: center; width: 100%; order: 3; opacity: 0.9;";
+    footerDiv.innerHTML = `
+        <p style="font-size: 14px; font-weight: 700; color: #FFFFFF; margin: 0 0 4px 0; letter-spacing: -0.5px;">Construindo memórias juntos... 🇧🇷</p>
+        <span style="font-size: 11px; font-weight: 600; color: #64748B;">Minha Jornada App : @prets_ia</span>
+    `;
+    mapaCard.appendChild(footerDiv);
 
-    // Ajusta o mapa original (SVG) para ficar visível acima do fundo escuro da moldura
-    const svgReal = document.querySelector('#svg-container');
-    let backupEstiloOriginal = "";
-    if (svgReal) {
-        backupEstiloOriginal = svgReal.style.cssText;
-        svgReal.style.position = "relative";
-        svgReal.style.zIndex = "1000"; // Joga o mapa pra frente da nossa nova moldura
-    }
-
-    // 3. Aguarda o DOM renderizar a nova roupagem e bate a foto
+    // 5. CAPTURA A INTERFACE REESTRUTURADA COM PERFEIÇÃO
     setTimeout(() => {
         html2canvas(mapaCard, { 
-            scale: 2, // Resolução dobrada para não pixelar nos Stories
+            scale: 2.5, // Resolução premium altíssima para o Instagram
             useCORS: true,
             logging: false
         }).then(canvas => {
@@ -464,20 +483,39 @@
             link.href = canvas.toDataURL('image/png');
             link.click();
             
-            // 4. Limpeza Geral: Remove a moldura temporária e restaura os estados originais do app
-            overlayPrint.remove();
-            if (svgReal) svgReal.style.cssText = backupEstiloOriginal;
+            // 6. RESTAURAÇÃO COMPLETA DO DESIGN ORIGINAL DO APP
+            headerDiv.remove();
+            footerDiv.remove();
+
+            mapaCard.style.background = backupMapaCard.background;
+            mapaCard.style.display = backupMapaCard.display;
+            mapaCard.style.flexDirection = backupMapaCard.flexDirection;
+            mapaCard.style.justifyContent = backupMapaCard.justifyContent;
+            mapaCard.style.padding = backupMapaCard.padding;
+            mapaCard.style.boxSizing = backupMapaCard.boxSizing;
+
+            svgContainer.style.width = backupSvgContainer.width;
+            svgContainer.style.height = backupSvgContainer.height;
+            svgContainer.style.borderRadius = backupSvgContainer.borderRadius;
+            svgContainer.style.boxShadow = backupSvgContainer.boxShadow;
+            svgContainer.style.overflow = backupSvgContainer.overflow;
+            svgContainer.style.order = backupSvgContainer.order;
+            svgContainer.style.margin = backupSvgContainer.margin;
+
             if (btnReset) btnReset.style.opacity = '1';
             
-            mostrarAlerta("Poste nos seus Stories", "📸");
+            mostrarAlerta("Poste em suas Redes!", "📸");
         }).catch(err => {
-            console.error("Erro ao gerar o layout elegante:", err);
-            overlayPrint.remove();
-            if (svgReal) svgReal.style.cssText = backupEstiloOriginal;
+            console.error("Erro ao processar imagem dos Stories:", err);
+            // Fallback de segurança em caso de erro na biblioteca externa
+            headerDiv.remove();
+            footerDiv.remove();
+            Object.assign(mapaCard.style, backupMapaCard);
+            Object.assign(svgContainer.style, backupSvgContainer);
             if (btnReset) btnReset.style.opacity = '1';
             mostrarAlerta("Falha ao criar o design dos Stories.", "❌");
         });
-    }, 200);
+    }, 250);
 }
 
     function renderTimeline() {
