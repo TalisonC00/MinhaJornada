@@ -27,34 +27,42 @@
         .ativa { display: block; }
         .card { background: var(--card); padding: 20px; margin: 16px; border-radius: 28px; box-shadow: 0 10px 30px rgba(0,0,0,0.06); }
 
-        /* TELA DE PAGAMENTO PREMIUM (PAYWALL UI) */
+        /* TELA DE PAGAMENTO PREMIUM INTERCEPTORA */
         #paywall-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: linear-gradient(135deg, #BAE6FD 0%, #F1F5F9 100%); 
+            background: rgba(30, 41, 59, 0.6); backdrop-filter: blur(8px);
             z-index: 9999; display: none; flex-direction: column; 
             align-items: center; justify-content: center; padding: 24px; box-sizing: border-box;
         }
         
         .paywall-card {
             background: #FFFFFF; padding: 32px 24px; border-radius: 36px;
-            box-shadow: 0 20px 50px rgba(30, 41, 59, 0.15); max-width: 360px;
+            box-shadow: 0 20px 50px rgba(30, 41, 59, 0.3); max-width: 360px;
             width: 100%; text-align: center; box-sizing: border-box; border: 1px solid rgba(255, 255, 255, 0.7);
+            position: relative;
+        }
+
+        .close-paywall {
+            position: absolute; top: 16px; right: 16px; background: #F1F5F9;
+            border: none; border-radius: 50%; width: 32px; height: 32px;
+            font-weight: 800; color: var(--text-sub); cursor: pointer;
         }
 
         .pay-app-icon { font-size: 50px; margin-bottom: 16px; animation: float 3s ease-in-out infinite; }
-        .pay-title { font-size: 26px; font-weight: 800; color: var(--text-main); margin: 0 0 8px 0; letter-spacing: -0.5px; }
+        .pay-title { font-size: 24px; font-weight: 800; color: var(--text-main); margin: 0 0 8px 0; letter-spacing: -0.5px; }
         .pay-price { font-size: 32px; font-weight: 800; color: var(--money); margin: 15px 0; display: flex; align-items: center; justify-content: center; gap: 4px; }
-        .pay-desc { font-size: 14px; color: var(--text-sub); margin: 0 0 24px 0; line-height: 1.6; }
+        .pay-desc { font-size: 13px; color: var(--text-sub); margin: 0 0 20px 0; line-height: 1.5; }
 
-        .pay-features { text-align: left; margin-bottom: 28px; background: #F8FAFC; padding: 16px; border-radius: 20px; border: 1px solid #F1F5F9; }
-        .feature-item { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; color: var(--text-main); margin-bottom: 12px; }
+        .pay-features { text-align: left; margin-bottom: 24px; background: #F8FAFC; padding: 16px; border-radius: 20px; border: 1px solid #F1F5F9; }
+        .feature-item { display: flex; align-items: center; gap: 10px; font-size: 12px; font-weight: 600; color: var(--text-main); margin-bottom: 10px; }
+        .feature-item:last-child { margin-bottom: 0; }
 
         .btn-pay {
             background: linear-gradient(135deg, var(--money) 0%, #059669 100%); color: #fff; border: none; padding: 18px;
             border-radius: 18px; width: 100%; font-weight: 800; font-size: 16px; cursor: pointer; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3); transition: 0.3s;
         }
         .btn-pay:active { transform: scale(0.98); box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2); }
-        .pay-footer-note { font-size: 11px; color: var(--text-sub); margin-top: 16px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .pay-footer-note { font-size: 11px; color: var(--text-sub); margin-top: 14px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 4px; }
 
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
       
@@ -108,22 +116,22 @@
 <body>
     <div id="paywall-overlay">
         <div class="paywall-card">
+            <button class="close-paywall" onclick="fecharPaywall()">✕</button>
             <div class="pay-app-icon">🗺️</div>
             <h1 class="pay-title">Minha Jornada</h1>
-            <p class="pay-desc">Esse é o seu diário de bordo oficial</p>
+            <p class="pay-desc">Esse é o seu diário de bordo oficial!</p>
             
             <div class="pay-features">
-                <div class="feature-item">📍 <span>Mapa do Brasil Interativo e Colorido</span></div>
-                <div class="feature-item">🕒 <span>Timeline viva com Foto e Vídeo</span></div>
-                <div class="feature-item">💰 <span>Controle de Gastos Inteligente (Hotel, Alimentação...)</span></div>
-                <div class="feature-item">🏆 <span>Painel Dinâmico de Conquistas</span></div>
-                <div class="feature-item">🔒 <span>Armazenamento 100% privado</span></div>
+                <div class="feature-item">📍<span>Mapa do Brasil Interativo e Colorido</span></div>
+                <div class="feature-item">🕒 <span>Navegue pela Linha do Tempo contínua das viagens com foto e vídeo</span></div>
+                <div class="feature-item">💰 <span>Visualize seus relatórios detalhados de gastos</span></div>
+                <div class="feature-item">🏆 <span>Eternize suas memórias com o Painel Dinâmico de Conquistas</span></div>
             </div>
 
             <div class="pay-price">R$ 19,90</div>
             <p style="font-size: 11px; font-weight: 700; color: var(--text-sub); margin: -10px 0 20px 0; text-transform: uppercase; letter-spacing: 0.5px;">Pagamento Único • Memórias Vitalícias</p>
 
-            <button class="btn-pay" onclick="irParaPagamento()">Comprar App Minha Jornada</button>
+            <button class="btn-pay" onclick="irParaPagamento()">Liberar Minha Jornada Completa 💳</button>
             
             <div class="pay-footer-note">
                 🛡️ Checkout Seguro via Stripe
@@ -227,11 +235,11 @@
     </div>
 
     <nav class="menu-nav">
-        <button class="btn-aba active" onclick="trocarAba('mapa', this)">🗺️</button>
-        <button class="btn-aba" onclick="trocarAba('timeline', this)">🕒</button>
-        <button class="btn-aba" onclick="trocarAba('jornada', this)">🏆</button>
-        <button class="btn-aba" onclick="trocarAba('registro', this)">➕</button>
-        <button class="btn-aba" onclick="trocarAba('gastos', this)">💰</button>
+        <button class="btn-aba active" onclick="navegarComCheck('mapa', this)">🗺️</button>
+        <button class="btn-aba" onclick="navegarComCheck('timeline', this)">🕒</button>
+        <button class="btn-aba" onclick="navegarComCheck('jornada', this)">🏆</button>
+        <button class="btn-aba" onclick="navegarComCheck('registro', this)">➕</button>
+        <button class="btn-aba" onclick="navegarComCheck('gastos', this)">💰</button>
     </nav>
     
     <script>
@@ -241,29 +249,32 @@
     let dbGlobal = []; 
     let controleMapa;
     let filaDeConquistas = []; 
+    let isPremium = false; // Flag controladora do Paywall (Freemium)
 
     function irParaPagamento() { window.location.href = STRIPE_LINK; }
+    function abrirPaywall() { document.getElementById('paywall-overlay').style.display = 'flex'; }
+    function fecharPaywall() { document.getElementById('paywall-overlay').style.display = 'none'; }
+
+    // Intercepta a navegação se o usuário tentar sair do Mapa ou do Registro sem pagar
+    function navegarComCheck(abaId, btn) {
+        if (!isPremium && (abaId === 'timeline' || abaId === 'gastos')) {
+            abrirPaywall();
+            return;
+        }
+        trocarAba(abaId, btn);
+    }
 
     async function verificarAcesso() {
-        const overlay = document.getElementById('paywall-overlay');
         const urlParams = new URLSearchParams(window.location.search);
         
         if (urlParams.get('status') === 'success') {
             localStorage.setItem('app_pago', 'true');
             window.history.replaceState({}, document.title, window.location.pathname);
-            if (overlay) overlay.style.display = 'none';
-            mostrarAlerta("Acesso liberado! Bem-vindo à sua jornada. 🎉", "🚀");
-            await carregarTudo();verificarNovasConquistas();
-            return;
+            mostrarAlerta("Acesso premium liberado! 🎉", "🚀");
         }
 
-        const jaPagou = localStorage.getItem('app_pago') === 'true';
-        if (jaPagou) {
-            if (overlay) overlay.style.display = 'none';
-            await carregarTudo();verificarNovasConquistas();
-        } else {
-            if (overlay) overlay.style.display = 'flex';
-        }
+        isPremium = localStorage.getItem('app_pago') === 'true';
+        await carregarTudo();
     }
 
     const REGIOES = {
@@ -315,24 +326,20 @@
     function fecharPopup() { document.getElementById('photo-popup').classList.remove('show'); document.getElementById('popup-overlay').style.display = 'none'; }
 
     function mostrarProximaConquistaDaFila() {
-    if (filaDeConquistas.length === 0) return;
-    
-    const conquista = filaDeConquistas[0];
-    const elNome = document.getElementById('celebracao-nome');
-    const elIcone = document.getElementById('celebracao-icone');
-    const modal = document.getElementById('modal-celebracao');
+        if (filaDeConquistas.length === 0) return;
+        const conquista = filaDeConquistas[0];
+        const elNome = document.getElementById('celebracao-nome');
+        const elIcone = document.getElementById('celebracao-icone');
+        const modal = document.getElementById('modal-celebracao');
 
-    // Força a injeção garantindo que os elementos existem no DOM
-    if (elNome && elIcone && modal) {
-        elNome.innerText = conquista.nome;
-        elIcone.innerText = conquista.icone;
-        modal.style.display = 'flex';
-    } else {
-        console.error("Erro de UI: Elementos do modal de celebração não foram encontrados no HTML.");
-        // Fallback de segurança para PO: usa um alerta nativo caso a UI falhe
-        mostrarAlerta(`Você desbloqueou: ${conquista.nome} ${conquista.icone}`, "🏆");
-      }
-   }
+        if (elNome && elIcone && modal) {
+            elNome.innerText = conquista.nome;
+            elIcone.innerText = conquista.icone;
+            modal.style.display = 'flex';
+        } else {
+            mostrarAlerta(`Você desbloqueou: ${conquista.nome} ${conquista.icone}`, "🏆");
+        }
+    }
 
     function fecharCelebracaoEProxima() {
         filaDeConquistas.shift();
@@ -341,59 +348,46 @@
     }
 
     function verificarNovasConquistas() {
-    // Se por algum motivo a sincronia falhar, força o bypass preventivo
-    if (!dbGlobal || dbGlobal.length === 0) {
-        return;
-    }
+        if (!dbGlobal || dbGlobal.length === 0) return;
 
-    const visitadosUfs = [...new Set(dbGlobal.map(v => v.uf))];
-    const metas = [
-        {id: 'm1',  n:1,  l:'Primeiro Passo',   i:'🌱'}, 
-        {id: 'm5',  n:5,  l:'Viajante',         i:'🚗'},
-        {id: 'm10', n:10, l:'Explorador',       i:'✈️'}, 
-        {id: 'm20', n:20, l:'Aventureiro',       i:'⛰️'},
-        {id: 'm25', n:25, l:'Nômade',           i:'🌍'}, 
-        {id: 'm27', n:27, l:'Dono do Brasil',   i:'👑'}
-    ];
-    
-    const celebrados = JSON.parse(localStorage.getItem('conquistas_vistas') || "[]");
-    let novas = [];
-
-    // 1. Quantidade de estados
-    metas.forEach(m => { 
-        if (visitadosUfs.length >= m.n && !celebrados.includes(m.id)) {
-            novas.push({nome: m.l, icone: m.i, id: m.id});
-        }
-    });
-
-    // 2. Conquista de praia
-    let temPraia = dbGlobal.some(v => v.praia);
-    if (temPraia && !celebrados.includes('praia')) {
-        novas.push({nome: 'Pé na Areia', icone: '🏖️', id: 'praia'});
-    }
-
-    // 3. Conquista das Regiões do Brasil
-    for (let r in REGIOES) {
-        const reg = REGIOES[r];
-        const vNaReg = reg.UFs.filter(u => visitadosUfs.includes(u));
-        const ok = vNaReg.length === reg.UFs.length;
+        const visitadosUfs = [...new Set(dbGlobal.map(v => v.uf))];
+        const metas = [
+            {id: 'm1',  n:1,  l:'Primeiro Passo',   i:'🌱'}, {id: 'm5',  n:5,  l:'Viajante',         i:'🚗'},
+            {id: 'm10', n:10, l:'Explorador',       i:'✈️'}, {id: 'm20', n:20, l:'Aventureiro',       i:'⛰️'},
+            {id: 'm25', n:25, l:'Nômade',           i:'🌍'}, {id: 'm27', n:27, l:'Dono do Brasil',   i:'👑'}
+        ];
         
-        if (ok && !celebrados.includes('reg_' + r)) {
-            novas.push({nome: `Região ${r} Concluída`, icone: reg.icon, id: 'reg_' + r});
+        const celebrados = JSON.parse(localStorage.getItem('conquistas_vistas') || "[]");
+        let novas = [];
+
+        metas.forEach(m => { 
+            if (visitadosUfs.length >= m.n && !celebrados.includes(m.id)) {
+                novas.push({nome: m.l, icone: m.i, id: m.id});
+            }
+        });
+
+        let temPraia = dbGlobal.some(v => v.praia);
+        if (temPraia && !celebrados.includes('praia')) {
+            novas.push({nome: 'Pé na Areia', icone: '🏖️', id: 'praia'});
+        }
+
+        for (let r in REGIOES) {
+            const reg = REGIOES[r];
+            const vNaReg = reg.UFs.filter(u => visitadosUfs.includes(u));
+            const ok = vNaReg.length === reg.UFs.length;
+            if (ok && !celebrados.includes('reg_' + r)) {
+                novas.push({nome: `Região ${r} Concluída`, icone: reg.icon, id: 'reg_' + r});
+            }
+        }
+
+        if (novas.length > 0) {
+            filaDeConquistas = [...filaDeConquistas, ...novas];
+            localStorage.setItem('conquistas_vistas', JSON.stringify([...celebrados, ...novas.map(n => n.id)]));
+            if (document.getElementById('modal-celebracao').style.display !== 'flex') {
+                mostrarProximaConquistaDaFila();
+            }
         }
     }
-
-    // Se encontrou alguma conquista inédita
-    if (novas.length > 0) {
-        filaDeConquistas = [...filaDeConquistas, ...novas];
-        localStorage.setItem('conquistas_vistas', JSON.stringify([...celebrados, ...novas.map(n => n.id)]));
-        
-        // Executa a abertura garantindo que o navegador terminou de processar o clique
-        setTimeout(() => {
-            mostrarProximaConquistaDaFila();
-        }, 300);
-    }
-}
 
     function compartilharNoStories() {
         const card = document.getElementById('captura-card');
@@ -408,7 +402,7 @@
 
     function renderTimeline() {
         const lista = document.getElementById('timeline-list');
-        if (!lista) return;
+        if (!lista || !isPremium) return; // Trava a exibição física se não for Premium
         lista.innerHTML = '';
         
         const ordenadas = [...dbGlobal].sort((a, b) => new Date(b.rawDate) - new Date(a.rawDate));
@@ -472,6 +466,18 @@
     function renderGastos() {
         let html = '', totalGeral = 0;
         const ufs = [...new Set(dbGlobal.map(v => v.uf))];
+        
+        if (!isPremium) { // Se for grátis, renderiza uma mensagem borrada (teaser)
+            document.getElementById('lista-detalhada-gastos').innerHTML = `
+                <div style="text-align:center; padding:40px 20px; filter:blur(1px); opacity:0.6; pointer-events:none;">
+                    <div class="resumo-uf-card"><h4>📍 Estado Demonstrativo</h4><div class="gasto-entry">🏨 R$ 000,00</div></div>
+                </div>
+                <p style="text-align:center; font-weight:700; color:var(--primary); margin-top:-30px;">Recurso disponível apenas na versão Premium</p>
+            `;
+            document.getElementById('total-geral-brasil').innerText = "Total Brasil: Bloqueado";
+            return;
+        }
+
         ufs.forEach(uf => {
             const viagensUf = dbGlobal.filter(v => v.uf === uf);
             const totalUF = viagensUf.reduce((acc, v) => acc + v.total, 0);
@@ -489,7 +495,7 @@
         const ufs = [...new Set(dbGlobal.map(v => v.uf))];
         ufs.forEach(u => { const el = document.getElementById(u); if(el) el.classList.add('visitado'); });
         document.getElementById('info').innerText = `ESTADOS CONQUISTADOS: ${ufs.length}`;
-        renderTimeline(); renderGastos(); renderJornada();
+        verificarNovasConquistas(); renderTimeline(); renderGastos(); renderJornada();
     }
 
     async function salvarViagem() {
@@ -523,14 +529,12 @@
         };
 
         await dbSalvar(trip);
-        
-        // CORREÇÃO DE FLUXO: Executa a leitura e renderização ANTES de limpar o input do DOM
         await carregarTudo(); 
         
         ['txt-cidade','txt-data','v-hosp','v-trans','v-alime','v-atrac','inp-foto'].forEach(id => document.getElementById(id).value = ""); 
         elPraia.checked = false;
         
-        mostrarAlerta("Memória salva!", "🚀"); 
+        mostrarAlerta("Memória salva! O mapa foi atualizado. 🚩", "🚀"); 
         trocarAba('mapa', document.querySelectorAll('.btn-aba')[0]);
     }
 
@@ -549,9 +553,15 @@
         if(id === 'gastos') renderGastos(); if(id === 'jornada') renderJornada(); if(id === 'timeline') renderTimeline();
     }
 
+    // Intercepta o clique no estado do mapa: se for Premium abre, se for Grátis abre o Paywall
     function abrirHistorico(ufId) {
         const viagens = dbGlobal.filter(v => v.uf === ufId);
         if (viagens.length === 0) return;
+        
+        if (!isPremium) {
+            abrirPaywall();
+            return;
+        }
         
         let h = `<h2 style="color:var(--primary); margin:0 0 15px 10px; font-size:20px; font-weight:800;">🚩 ${ufId.replace('BR','')}</h2>`;
         
