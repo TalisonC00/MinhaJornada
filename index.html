@@ -138,26 +138,7 @@
             </div>
         </div>
     </div>
-     <!-- CONTAINER EXCLUSIVO PARA O PRINT DOS STORIES (INVISÍVEL NA TELA) -->
-<div id="container-print-stories" style="position: fixed; top: -9999px; left: -9999px; width: 1080px; height: 1920px; background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 140px 60px; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif;">
     
-    <!-- Topo do Card -->
-    <div style="text-align: center; width: 100%;">
-        <span style="font-size: 36px; font-weight: 800; color: #FF4B5C; text-transform: uppercase; letter-spacing: 8px; display: block; margin-bottom: 16px;">Nossa Jornada</span>
-        <div style="width: 100px; height: 4px; background: #FF4B5C; margin: 0 auto; border-radius: 2px;"></div>
-    </div>
-
-    <!-- Moldura Dinâmica Centralizada do Mapa -->
-    <div id="molde-mapa-print" style="width: 100%; height: 1200px; background: #FFFFFF; border-radius: 48px; box-shadow: 0 30px 70px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; padding: 20px; box-sizing: border-box; overflow: hidden;">
-        <!-- O container real do mapa será renderizado perfeitamente aqui dentro -->
-    </div>
-
-    <!-- Rodapé Minimalista -->
-    <div style="text-align: center; width: 100%; opacity: 0.9;">
-        <p style="font-size: 28px; font-weight: 700; color: #FFFFFF; margin: 0 0 12px 0; letter-spacing: -0.5px;">Construindo memórias... 🇧🇷</p>
-        <span style="font-size: 20px; font-weight: 600; color: #64748B;">Minha Jornada App:@prets_ia</span>
-    </div>
-</div>
     <div class="header">
         <h3> 📸 Minha Jornada</h3>
         <span id="info">ESTADOS CONQUISTADOS: 0</span>
@@ -409,64 +390,43 @@
     }
 
     function compartilharNoStories() {
-    // Captura os elementos reais da tela e do molde invisível
-    const mapaCardOriginal = document.querySelector('.mapa-card');
-    const containerPrint = document.getElementById('container-print-stories');
-    const moldeMapa = document.getElementById('molde-mapa-print');
-    const abaMapa = document.getElementById('aba-mapa');
+    // Alvo direto: a div onde o mapa é renderizado nativamente na tela
+    const mapaCard = document.querySelector('.mapa-card');
     
-    if (!mapaCardOriginal || !containerPrint || !moldeMapa || !abaMapa) {
-        return mostrarAlerta("Erro ao preparar a estrutura de compartilhamento.", "❌");
+    if (!mapaCard) {
+        return mostrarAlerta("Não foi possível localizar a tela do mapa para o print.", "❌");
     }
 
-    // Oculta o botão de reset (🔄) para ele não sair no print do Instagram
-    const btnReset = mapaCardOriginal.querySelector('button');
+    // Oculta o botão de reset (🔄) temporariamente para o print sair limpo
+    const btnReset = mapaCard.querySelector('button');
     if (btnReset) btnReset.style.opacity = '0';
 
-    // Fecha o modal de celebração para limpar a interface visual
+    // Fecha o modal de celebração para não cobrir a tela
     document.getElementById('modal-celebracao').style.display = 'none';
 
-    // 1. Guarda temporariamente o estilo original do mapa e move o elemento real para o molde do print
-    const estiloOriginalW = mapaCardOriginal.style.width;
-    const estiloOriginalH = mapaCardOriginal.style.height;
-    
-    mapaCardOriginal.style.width = "100%";
-    mapaCardOriginal.style.height = "100%";
-    moldeMapa.appendChild(mapaCardOriginal);
-
-    // 2. Aguarda o ciclo do DOM estabilizar a renderização física no container de alta resolução
+    // Pequeno delay para garantir que o modal sumiu da tela antes do print
     setTimeout(() => {
-        html2canvas(containerPrint, { 
-            width: 1080,
-            height: 1920,
-            scale: 1, // Mantém proporção perfeita de Stories de alta fidelidade
+        html2canvas(mapaCard, { 
+            backgroundColor: '#ffffff', // Garante o fundo branco limpo do mapa
+            scale: 2,                  // Dobra a resolução para não pixelar no Instagram
             useCORS: true,
             logging: false
         }).then(canvas => {
             const link = document.createElement('a');
-            link.download = 'nossa-jornada-stories.png';
+            link.download = 'meu-mapa-minha-jornada.png';
             link.href = canvas.toDataURL('image/png');
             link.click();
             
-            // 3. Devolve o mapa para a interface original do aplicativo intacto
-            mapaCardOriginal.style.width = estiloOriginalW;
-            mapaCardOriginal.style.height = estiloOriginalH;
-            abaMapa.appendChild(mapaCardOriginal);
-            
-            // Restaura a opacidade do botão de reset na tela do usuário
+            // Restaura o botão de reset na tela do usuário
             if (btnReset) btnReset.style.opacity = '1';
             
-            mostrarAlerta("Compartilhe no seu Instagram", "📸");
+            mostrarAlerta("Compartilhe nos seus Stories", "📸");
         }).catch(err => {
-            console.error("Erro ao gerar o layout elegante:", err);
-            // Fallback: garante que o mapa volte para a tela se houver erro
-            mapaCardOriginal.style.width = estiloOriginalW;
-            mapaCardOriginal.style.height = estiloOriginalH;
-            abaMapa.appendChild(mapaCardOriginal);
+            console.error("Erro ao tirar print do mapa:", err);
             if (btnReset) btnReset.style.opacity = '1';
-            mostrarAlerta("Falha ao criar o design dos Stories.", "❌");
+            mostrarAlerta("Falha ao gerar o print do mapa.", "❌");
         });
-    }, 250);
+    }, 150);
 }
 
     function renderTimeline() {
