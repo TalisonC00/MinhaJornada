@@ -511,14 +511,14 @@
 
     const allFiles = Array.from(elFoto.files);
     
-    // Filtra QUALQUER mídia (imagem ou vídeo) e limita o total estrito em 5
+    // 1. Limita estritamente em até 5 arquivos de qualquer tipo (imagem ou vídeo)
     const midiasSelecionadas = allFiles.filter(f => f.type.startsWith('image/') || f.type.startsWith('video/')).slice(0, 5);
 
     if (midiasSelecionadas.length === 0) {
         return mostrarAlerta("Selecione ao menos uma foto ou vídeo!", "📸");
     }
 
-    // Separa apenas para manter a estrutura correta do seu IndexedDB
+    // 2. Separa e mapeia os Blobs mantendo a integridade exigida pelo seu banco local
     const fotos = midiasSelecionadas.filter(f => f.type.startsWith('image/'));
     const videos = midiasSelecionadas.filter(f => f.type.startsWith('video/'));
 
@@ -528,19 +528,35 @@
     const at = parseFloat(document.getElementById('v-atrac').value) || 0;
 
     const trip = { 
-        id: Date.now().toString(), uf: elUf.value, cidade: elCidade.value, 
-        data: elData.value.split('-').reverse().join('/'), rawDate: elData.value, 
-        fotos: fotos, videos: videos, h, t, al, at, praia: elPraia.checked, total: h + t + al + at 
+        id: Date.now().toString(), 
+        uf: elUf.value, 
+        cidade: elCidade.value, 
+        data: elData.value.split('-').reverse().join('/'), 
+        rawDate: elData.value, 
+        fotos: fotos,    // Armazena a Array filtrada de Blobs de imagens
+        videos: videos,  // Armazena a Array filtrada de Blobs de vídeos
+        h, t, al, at, 
+        praia: elPraia.checked, 
+        total: h + t + al + at 
     };
 
-    await dbSalvar(trip);
-    await carregarTudo(); 
-    
-    ['txt-cidade','txt-data','v-hosp','v-trans','v-alime','v-atrac','inp-foto'].forEach(id => document.getElementById(id).value = ""); 
-    elPraia.checked = false;
-    
-    mostrarAlerta("Memória salva!🚩", "🚀"); 
-    trocarAba('mapa', document.querySelectorAll('.btn-aba')[0]);
+    try {
+        // 3. Garante a gravação física assíncrona no IndexedDB
+        await dbSalvar(trip);
+        
+        // 4. Força a leitura completa do banco e atualiza a interface
+        await carregarTudo(); 
+        
+        // Limpeza dos campos após o sucesso confirmado
+        ['txt-cidade','txt-data','v-hosp','v-trans','v-alime','v-atrac','inp-foto'].forEach(id => document.getElementById(id).value = ""); 
+        elPraia.checked = false;
+        
+        mostrarAlerta("Memória salva! O mapa foi atualizado. 🚩", "🚀"); 
+        trocarAba('mapa', document.querySelectorAll('.btn-aba')[0]);
+    } catch (error) {
+        console.error("Erro ao salvar no IndexedDB:", error);
+        mostrarAlerta("Falha ao salvar a memória", "❌");
+    }
 }
 
     function removerViagem(id, city) {
