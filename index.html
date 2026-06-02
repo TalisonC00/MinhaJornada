@@ -122,10 +122,10 @@
             <p class="pay-desc">Esse é o seu diário de bordo oficial! 🇧🇷 </p>
             
             <div class="pay-features">
-                <div class="feature-item">📍<span>Mapa do Brasil Interativo e Colorido</span></div>
+                <div class="feature-item">🗺️<span>Mapa do Brasil Interativo e Colorido</span></div>
                 <div class="feature-item">🕒 <span>Navegue pela Linha do Tempo contínua das viagens com foto e vídeo</span></div>
-                <div class="feature-item">💰 <span>Visualize seus relatórios detalhados de gastos</span></div>
                 <div class="feature-item">🏆 <span>Eternize suas memórias com o Painel Dinâmico de Conquistas</span></div>
+                <div class="feature-item">💰 <span>Visualize seus relatórios detalhados de gastos</span></div>
             </div>
 
             <div class="pay-price">R$ 19,90</div>
@@ -326,20 +326,32 @@
     function fecharPopup() { document.getElementById('photo-popup').classList.remove('show'); document.getElementById('popup-overlay').style.display = 'none'; }
 
     function mostrarProximaConquistaDaFila() {
-        if (filaDeConquistas.length === 0) return;
-        const conquista = filaDeConquistas[0];
-        const elNome = document.getElementById('celebracao-nome');
-        const elIcone = document.getElementById('celebracao-icone');
-        const modal = document.getElementById('modal-celebracao');
+    if (filaDeConquistas.length === 0) return;
+    const conquista = filaDeConquistas[0];
+    const elNome = document.getElementById('celebracao-nome');
+    const elIcone = document.getElementById('celebracao-icone');
+    const modal = document.getElementById('modal-celebracao');
 
-        if (elNome && elIcone && modal) {
-            elNome.innerText = conquista.nome;
-            elIcone.innerText = conquista.icone;
-            modal.style.display = 'flex';
-        } else {
-            mostrarAlerta(`Você desbloqueou: ${conquista.nome} ${conquista.icone}`, "🏆");
+    if (elNome && elIcone && modal) {
+        elNome.innerText = conquista.nome;
+        elIcone.innerText = conquista.icone;
+        modal.style.display = 'flex';
+
+        // 🔊 DISPARO DO SOM DA CONQUISTA
+        try {
+            // Instancia o arquivo de som salvo na pasta do seu projeto
+            const som = new Audio('conquista.mp3'); 
+            som.volume = 0.6; // Define o volume em 60% para não assustar o usuário
+            som.play();
+        } catch (error) {
+            // O navegador pode bloquear o som se o usuário não tiver interagido com a tela ainda
+            console.log("Áudio bloqueado ou falhou:", error);
         }
+        
+    } else {
+        mostrarAlerta(`Você desbloqueou: ${conquista.nome} ${conquista.icone}`, "🏆");
     }
+}
 
     function fecharCelebracaoEProxima() {
         filaDeConquistas.shift();
