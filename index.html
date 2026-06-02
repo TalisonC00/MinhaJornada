@@ -221,7 +221,7 @@
             <label>Gastos (R$)</label>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><input type="number" id="v-hosp" placeholder="Hotel"><input type="number" id="v-trans" placeholder="Transporte"></div>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:8px;"><input type="number" id="v-alime" placeholder="Comida"><input type="number" id="v-atrac" placeholder="Atrações"></div>
-            <label>Mídias(4 Fotos e 1 Video)</label> <input type="file" id="inp-foto" accept="image/*,video/*" multiple>
+            <label>Máx: 5 Mídias </label> <input type="file" id="inp-foto" accept="image/*,video/*" multiple>
             <button class="btn-acao" onclick="salvarViagem()">Salvar Memória🚩</button>
         </div>
     </div>
@@ -510,13 +510,15 @@
         }
 
         const allFiles = Array.from(elFoto.files);
-        const fotos = allFiles.filter(f => f.type.startsWith('image/')).slice(0, 4);
-        const videos = allFiles.filter(f => f.type.startsWith('video/')).slice(0, 1);
+        // Filtra QUALQUER mídia (imagem ou vídeo) e limita o total estrito em 5
+        const fotos = midiasSelecionadas.filter(f => f.type.startsWith('image/'));
+        const videos = midiasSelecionadas.filter(f => f.type.startsWith('video/'));
+        const midiasSelecionadas = allFiles.filter(f => f.type.startsWith('image/') || f.type.startsWith('video/')).slice(0, 5);
 
         if (fotos.length === 0 && videos.length === 0) {
             return mostrarAlerta("Selecione ao menos uma foto ou vídeo!", "📸");
         }
-
+        
         const h = parseFloat(document.getElementById('v-hosp').value) || 0;
         const t = parseFloat(document.getElementById('v-trans').value) || 0;
         const al = parseFloat(document.getElementById('v-alime').value) || 0;
@@ -534,7 +536,7 @@
         ['txt-cidade','txt-data','v-hosp','v-trans','v-alime','v-atrac','inp-foto'].forEach(id => document.getElementById(id).value = ""); 
         elPraia.checked = false;
         
-        mostrarAlerta("Memória salva! O mapa foi atualizado. 🚩", "🚀"); 
+        mostrarAlerta("Memória salva!🚩", "🚀"); 
         trocarAba('mapa', document.querySelectorAll('.btn-aba')[0]);
     }
 
